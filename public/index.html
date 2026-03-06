@@ -3,479 +3,724 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Up Produk Digital - HamzX Topup</title>
+    <title>KinzxxPedia | Layanan Digital Modern</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
         :root {
-            --bs-body-bg-rgb: 248, 249, 250;
-            --bs-tertiary-bg-rgb: 255, 255, 255;
-            --bs-border-color: #dee2e6;
-            --bs-primary-rgb: 13, 110, 253;
+            --bs-body-bg-rgb: 248, 250, 252;
+            --bs-tertiary-bg-rgb: 255,   ⁠255, 255;
+            --bs-border-color: #e2e8f0;
+            --bs-primary-rgb: 99, 102, 241;
+            --bs-primary: #6366f1;
+            --bs-primary-dark: #4f46e5;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
         }
-
+        
         [data-bs-theme="dark"] {
-            --bs-body-bg-rgb: 18, 18, 18;
-            --bs-tertiary-bg-rgb: 30, 30, 30;
-            --bs-border-color: #444;
-            --bs-primary-rgb: 106, 17, 203;
+            --bs-body-bg-rgb: 15, 23, 42;
+            --bs-tertiary-bg-rgb: 30, 41, 59;
+            --bs-border-color: #334155;
+            --bs-primary-rgb: 129, 140, 248;
+            --bs-primary: #818cf8;
+            --bs-primary-dark: #6366f1;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
         }
 
         #bg-canvas {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background-color: rgb(var(--bs-body-bg-rgb));
-            transition: background-color 0.3s ease;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 30% 50%, rgba(var(--bs-primary-rgb), 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(var(--bs-primary-rgb), 0.05) 0%, transparent 50%);
+            transition: background 0.3s ease;
         }
 
         body {
-             display: flex;
-             flex-direction: column;
-             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            backdrop-filter: blur(2px);
         }
 
         main {
-             flex-grow: 1;
+            flex-grow: 1;
         }
 
-        .view {
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            min-height: calc(100vh - 150px);
+        /* Modern Glassmorphism Navbar */
+        .navbar {
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
         }
-        .view.active {
-            display: block;
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-         .view.hiding {
-            display: block;
-            animation: fadeOut 0.3s ease-in forwards;
-        }
-        .view:not(.active):not(.hiding) {
-            display: none;
+        
+        .navbar-brand {
+            background: linear-gradient(135deg, var(--bs-primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
         }
 
-
+        /* Modern Cards */
         .selection-item {
             cursor: pointer;
-            border-radius: 0.75rem;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+            border-radius: 2rem;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
             height: 100%;
             overflow: hidden;
-            border: 1px solid var(--bs-border-color);
-            background-color: var(--bs-tertiary-bg);
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            box-shadow: var(--card-shadow);
         }
+        
         .selection-item .card-body {
-            transition: background-color 0.2s ease;
+            transition: all 0.3s ease;
+            padding: 2rem;
         }
-        .selection-item:hover:not(.status-unavailable) {
+        
+        .selection-item:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 30px 50px -20px rgba(var(--bs-primary-rgb), 0.5);
+            border-color: var(--bs-primary);
+        }
+        
+        .selection-item:hover .card-icon i {
+            transform: scale(1.1) rotate(5deg);
+            color: var(--bs-primary);
+        }
+        
+        .selection-item .card-icon i {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, var(--bs-primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            transition: all 0.4s ease;
+        }
+        
+        .selection-item .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 1rem;
+        }
+        
+        .selection-item .card-text {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Special Guide Card */
+        .guide-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guide-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.6s;
+        }
+        
+        .guide-card:hover::before {
+            opacity: 1;
+        }
+        
+        .guide-card .card-icon i,
+        .guide-card .card-title,
+        .guide-card .card-text {
+            color: white !important;
+            -webkit-text-fill-color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Modern Carousel */
+        .carousel {
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .carousel-item img {
+            filter: brightness(0.8);
+            transition: transform 8s ease;
+        }
+        
+        .carousel-item.active img {
+            transform: scale(1.1);
+        }
+        
+        .carousel-caption {
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 3rem 2rem;
+            text-align: left;
+        }
+        
+        .carousel-caption h5 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .carousel-caption p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 500px;
+        }
+
+        /* Modern Form */
+        .feedback-form-card {
+            max-width: 700px;
+            margin: 5rem auto;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 2.5rem !important;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .feedback-form-card .card-body {
+            padding: 3rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--bs-primary);
+        }
+        
+        .input-group {
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        }
+        
+        .input-group-text {
+            border: 1px solid var(--bs-border-color);
+            background: rgba(var(--bs-primary-rgb), 0.1);
+            color: var(--bs-primary);
+            padding-left: 1.2rem;
+            padding-right: 1.2rem;
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid var(--bs-border-color);
+            padding: 0.8rem 1.2rem;
+            font-size: 1rem;
+            background: rgba(var(--bs-tertiary-bg-rgb), 0.5);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.1);
+        }
+
+        /* Modern Footer */
+        .custom-footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--glass-border);
+            padding-top: 4rem;
+            padding-bottom: 3rem;
+        }
+        
+        .custom-footer h5 {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, var(--bs-primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .custom-footer .list-unstyled li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .custom-footer .list-unstyled li a {
+            color: var(--bs-body-color);
+            text-decoration: none;
+            transition: all 0.3s;
+            opacity: 0.7;
+            font-weight: 500;
+        }
+        
+        .custom-footer .list-unstyled li a:hover {
+            opacity: 1;
+            color: var(--bs-primary);
+            padding-left: 5px;
+        }
+        
+        .social-icons a {
+            font-size: 1.8rem;
+            margin-right: 1.2rem;
+            color: var(--bs-body-color);
+            opacity: 0.7;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .social-icons a:hover {
+            opacity: 1;
+            color: var(--bs-primary);
             transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
-        }
-        .selection-item:hover:not(.status-unavailable) .card-body {
-            background-color: rgba(var(--bs-primary-rgb), 0.05);
-        }
-        .selection-item.active:not(.status-unavailable) {
-            border-color: var(--bs-primary) !important;
-            box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.4);
-            transform: translateY(0);
         }
 
-        .selection-item.status-unavailable {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        /* Sidebar Modern */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--glass-border);
+            z-index: 1050;
+            transition: left 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+            overflow-y: auto;
+            padding: 2rem 1.5rem;
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.1);
         }
-        .selection-item.status-unavailable:hover .card-body {
-            background-color: var(--bs-tertiary-bg);
+        
+        .sidebar.open {
+            left: 0;
         }
-        .selection-item.status-unavailable .text-primary {
-             color: var(--bs-body-secondary) !important;
-        }
-         .selection-item.status-unavailable .text-body-secondary {
-            font-style: italic;
-         }
-
-
-        .selection-item .card-body img {
-             max-width: 100%;
-        }
-         .selection-item .card-body .fw-semibold {
-             overflow: hidden;
-             text-overflow: ellipsis;
-             white-space: nowrap;
-         }
-
-         .product-details {
-             font-size: 0.85em;
-             color: var(--bs-body-secondary);
-             margin-top: 5px;
-             border-top: 1px solid var(--bs-border-color);
-             padding-top: 5px;
-         }
-         .product-details div {
-             margin-bottom: 2px;
-             overflow: hidden;
-             text-overflow: ellipsis;
-             white-space: nowrap;
-         }
-         .product-details strong {
-             font-weight: 600;
-             margin-right: 5px;
-         }
-          .product-note {
-              font-size: 0.75em;
-              color: var(--bs-body-secondary);
-              font-style: italic;
-              margin-top: 5px;
-          }
-
-
-        .loader-container {
-            min-height: 70vh;
+        
+        .sidebar-header {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 2px solid var(--bs-primary);
         }
-        .loader-content, .loader-error {
-            padding: 20px;
+        
+        .sidebar-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--bs-primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
         }
-         .loader-error {
-             width: 75%;
-             max-width: 500px;
-             margin-left: auto;
-             margin-right: auto;
-         }
-
-
-        .theme-icon-light, .theme-icon-dark { display: none; }
-        html[data-bs-theme="light"] .theme-icon-light { display: inline-block; }
-        html[data-bs-theme="dark"] .theme-icon-dark { display: inline-block; }
-
-        .btn-loader.spinner-border { vertical-align: middle; margin-right: .5rem; }
-
-        #submit-button .btn-text { display: inline-block; }
-        #submit-button .btn-loader { display: none; }
-
-        #submit-button.submitting .btn-text { display: none; }
-        #submit-button.submitting .btn-loader { display: inline-block; }
-
-
-        .back-button {
-             color: var(--bs-body-secondary) !important;
-             transition: color 0.2s ease;
-         }
-        .back-button:hover {
-            color: var(--bs-primary) !important;
+        
+        .sidebar-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--bs-body-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-    
-/* ===============================
-   CODASHOP / UNIPIN FULL STYLE
-   =============================== */
+        
+        .sidebar-close:hover {
+            background: rgba(var(--bs-primary-rgb), 0.1);
+            color: var(--bs-primary);
+            transform: rotate(90deg);
+        }
+        
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.5rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--bs-body-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .sidebar-item:hover {
+            background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.1), rgba(168, 85, 247, 0.1));
+            color: var(--bs-primary);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-item i {
+            margin-right: 1rem;
+            font-size: 1.3rem;
+            color: var(--bs-primary);
+        }
+        
+        .sidebar-toggle {
+            position: fixed;
+            top: 1.2rem;
+            left: 1.2rem;
+            z-index: 1030;
+            background: linear-gradient(135deg, var(--bs-primary), #a855f7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(var(--bs-primary-rgb), 0.4);
+            transition: all 0.3s;
+        }
+        
+        .sidebar-toggle:hover {
+            transform: scale(1.1) rotate(180deg);
+            box-shadow: 0 15px 30px rgba(var(--bs-primary-rgb), 0.6);
+        }
+        
+        .sidebar-toggle i {
+            font-size: 1.8rem;
+        }
 
-:root {
-    --brand-primary: #ff7a00;
-}
-
-[data-bs-theme="dark"] {
-    --bs-primary-rgb: 255, 122, 0;
-}
-
-/* Navbar */
-.navbar {
-    border-bottom: 1px solid var(--bs-border-color);
-}
-.navbar-brand {
-    font-weight: 900;
-    letter-spacing: .4px;
-}
-
-/* Cards */
-.card {
-    border-radius: 0.75rem !important;
-    border: 1px solid var(--bs-border-color);
-    box-shadow: none;
-}
-
-/* Selection items */
-.selection-item {
-    border-radius: 0.75rem;
-    background-color: var(--bs-tertiary-bg);
-    transition: transform .2s ease, border-color .2s ease;
-}
-
-.selection-item:hover:not(.status-unavailable) {
-    transform: translateY(-3px);
-    border-color: var(--brand-primary);
-    box-shadow: 0 6px 16px rgba(0,0,0,.12);
-}
-
-.selection-item.active:not(.status-unavailable) {
-    border: 2px solid var(--brand-primary) !important;
-    background-color: rgba(255,122,0,.06);
-}
-
-/* Price */
-.selection-item .text-primary {
-    color: var(--brand-primary) !important;
-    font-weight: 800;
-}
-
-/* Badge */
-.badge {
-    border-radius: .4rem;
-    font-size: .7rem;
-}
-
-/* Input */
-.input-group-text {
-    background-color: #f1f1f1;
-    border-radius: .6rem;
-}
-[data-bs-theme="dark"] .input-group-text {
-    background-color: #2a2a2a;
-}
-
-.input-group-lg .form-control {
-    border-radius: .6rem;
-}
-
-/* Submit button */
-#submit-button {
-    background-color: var(--brand-primary);
-    border: none;
-    border-radius: .6rem;
-    font-weight: 800;
-}
-
-#submit-button:hover:not(:disabled) {
-    background-color: #ff8f26;
-}
-
-/* Selected product box */
-#selected-product-details {
-    background-color: rgba(0,0,0,.03);
-    border-radius: .6rem;
-    padding: 12px;
-}
-
-[data-bs-theme="dark"] #selected-product-details {
-    background-color: rgba(255,255,255,.05);
-}
-
-/* Footer */
-footer {
-    font-size: .85rem;
-}
-
-
-/* ===============================
-   SMOOTH CARD ENTRANCE ANIMATION
-   =============================== */
-@keyframes cardFadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.96);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.selection-item {
-    animation: cardFadeUp .45s ease forwards;
-}
-
-.selection-item:nth-child(1) { animation-delay: .05s; }
-.selection-item:nth-child(2) { animation-delay: .1s; }
-.selection-item:nth-child(3) { animation-delay: .15s; }
-.selection-item:nth-child(4) { animation-delay: .2s; }
-.selection-item:nth-child(5) { animation-delay: .25s; }
-.selection-item:nth-child(6) { animation-delay: .3s; }
-
-
-/* ===============================
-   GLOBAL BRAND COLOR (TOKOPEDIA STYLE)
-   =============================== */
-:root {
-    --brand-primary: #03ac0e;
-    --brand-primary-dark: #029c0c;
-    --brand-soft: #eaffea;
-
-    --bg-card: #ffffff;
-    --bg-page: #f8f9fa;
-    --border-color: #e5e7eb;
-
-    --text-main: #111827;
-    --text-muted: #6b7280;
-}
-
-[data-bs-theme="dark"] {
-    --brand-primary: #22c55e;
-    --brand-primary-dark: #16a34a;
-    --brand-soft: rgba(34,197,94,.15);
-
-    --bg-card: #1f2933;
-    --bg-page: #111827;
-    --border-color: #374151;
-
-    --text-main: #f9fafb;
-    --text-muted: #9ca3af;
-}
-
-/* Konsisten komponen */
-.selection-item,
-.tp-product {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
-}
-
-.selection-item:hover:not(.status-unavailable),
-.tp-product:hover {
-    border-color: var(--brand-primary);
-    background-color: var(--brand-soft);
-}
-
-.selection-item.active:not(.status-unavailable),
-.tp-product.active {
-    border: 2px solid var(--brand-primary);
-    background-color: var(--brand-soft);
-}
-
-.text-primary,
-.tp-product .price {
-    color: var(--brand-primary) !important;
-    font-weight: 700;
-}
-
-#submit-button {
-    background-color: var(--brand-primary);
-    border: none;
-}
-
-#submit-button:hover:not(:disabled) {
-    background-color: var(--brand-primary-dark);
-}
-
-.badge.bg-success-subtle {
-    background-color: var(--brand-soft) !important;
-    color: var(--brand-primary) !important;
-}
-
-.badge.bg-danger-subtle {
-    background-color: rgba(239,68,68,.15) !important;
-    color: #ef4444 !important;
-}
-
-</style>
+        /* Modern Button */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--bs-primary), #a855f7);
+            border: none;
+            border-radius: 1.5rem;
+            padding: 0.8rem 1.8rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            transition: all 0.3s;
+            box-shadow: 0 8px 16px rgba(var(--bs-primary-rgb), 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(var(--bs-primary-rgb), 0.5);
+        }
+        
+        /* Theme Toggle */
+        #theme-toggle {
+            border-radius: 2rem;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(4px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .carousel-caption h5 {
+                font-size: 1.5rem;
+            }
+            
+            .feedback-form-card .card-body {
+                padding: 2rem 1.5rem;
+            }
+            
+            .sidebar {
+                width: 280px;
+                left: -280px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-body-tertiary">
+<body class="bg-body">
     <canvas id="bg-canvas"></canvas>
+    
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="bi bi-grid-3x3-gap-fill"></i>
+    </button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <!-- Modern Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">Menu</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="sidebar-content">
+            <div class="sidebar-item" data-type="topup">
+                <i class="bi bi-phone-fill"></i>
+                <span>Top Up Digital</span>
+            </div>
+            <div class="sidebar-item" data-type="panel">
+                <i class="bi bi-grid-fill"></i>
+                <span>Produk Lainnya</span>
+            </div>
+            <div class="sidebar-item" data-type="panduan">
+                <i class="bi bi-book-fill"></i>
+                <span>Panduan Membeli</span>
+            </div>
+            
+            <div class="mt-5">
+                <h5 class="sidebar-title mb-3">Tautan Cepat</h5>
+                <a href="#" class="sidebar-item">
+                    <i class="bi bi-file-text"></i>
+                    <span>Syarat & Ketentuan</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <i class="bi bi-shield-check"></i>
+                    <span>Kebijakan Privasi</span>
+                </a>
+                <a href="#" class="sidebar-item">
+                    <i class="bi bi-question-circle"></i>
+                    <span>Pusat Bantuan</span>
+                </a>
+            </div>
+        </div>
+    </div>
 
-    <header class="navbar navbar-expand-lg bg-body-tertiary shadow-sm sticky-top">
-        <nav class="container-fluid">
+    <!-- Modern Navbar -->
+    <header class="navbar navbar-expand-lg sticky-top">
+        <nav class="container">
             <a class="navbar-brand fw-bolder" href="/">
-                <i class="bi bi-lightning-charge-fill text-primary me-1"></i>PlayTopUp
+                <i class="bi bi-lightning-charge-fill me-2"></i>
+                KinzxxPedia
             </a>
-             <span class="navbar-text me-3 text-body-secondary">
-      Top Up Produk Digital
-             </span>
-            <button id="theme-toggle" class="btn fs-5" aria-label="Toggle theme">
-                <i class="bi bi-sun-fill theme-icon-light"></i>
-                <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+            <button id="theme-toggle" class="btn" aria-label="Toggle theme">
+                <i class="bi bi-sun-fill theme-icon-light fs-4"></i>
+                <i class="bi bi-moon-stars-fill theme-icon-dark fs-4"></i>
             </button>
         </nav>
     </header>
 
-    <main class="container-fluid py-4 py-lg-5">
-
-        <div id="loader-view" class="view active">
-             <div id="loader-content" class="loader-container">
-                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-                <p class="mt-3 fs-5 text-body-secondary">Loading...</p>
-            </div>
-            <div id="loader-error" class="alert alert-danger mt-3 d-none loader-error" role="alert">
-                <i class="bi bi-x-octagon-fill me-2"></i> <span id="loader-error-text"></span>
-            </div>
-        </div>
-
-        <div id="category-view" class="view">
-            <h1 class="mb-4 fw-bold">Pilih Kategori</h1>
-            <div id="category-list" class="row g-3 g-lg-4"></div>
-        </div>
-
-        <div id="provider-view" class="view">
-            <div class="d-flex align-items-center mb-4">
-                <button class="btn fs-3 p-0 me-3 back-button" data-target="category-view" aria-label="Kembali ke Kategori"><i class="bi bi-arrow-left-circle-fill"></i></button>
-                <h1 class="fw-bold mb-0" id="provider-title"></h1>
-            </div>
-            <div id="provider-list" class="row g-3 g-lg-4"></div>
-        </div>
-
-        <div id="product-view" class="view">
-            <div class="d-flex align-items-center mb-4">
-                 <button class="btn fs-3 p-0 me-3 back-button" data-target="provider-view" aria-label="Kembali ke Provider"><i class="bi bi-arrow-left-circle-fill"></i></button>
-                <h1 class="fw-bold mb-0" id="product-title"></h1>
-            </div>
-            <div class="card shadow-sm mb-4">
-                <div class="card-body p-lg-4">
-                    <form id="order-form" class="row g-3 align-items-center">
-                        <div class="col-12 col-md">
-                            <label for="tujuan" class="form-label fw-semibold visually-hidden">Nomor Tujuan / User ID</label>
-                            <div class="input-group input-group-lg">
-                                <span class="input-group-text"><i class="bi bi-phone-vibrate"></i></span>
-                                <input type="text" id="tujuan" class="form-control" placeholder="Masukkan nomor/ID tujuan..." required>
-                            </div>
+    <main class="container py-5 animate-fade-in">
+        <!-- Modern Carousel Section -->
+        <section class="mb-5">
+            <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide-to="0" class="active"></button>
+                    <button type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide-to="2"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://files.catbox.moe/eabe85.jpg" class="d-block w-100" alt="Banner 1">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5 class="fw-bold">Promo Spesial 50%</h5>
+                            <p>Dapatkan diskon besar-besaran untuk semua produk digital.</p>
                         </div>
-                        <div class="col-12 col-md-auto">
-                            <button type="submit" id="submit-button" class="btn btn-primary btn-lg w-100 fw-bold" disabled>
-                                <span class="btn-loader spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                <span class="btn-text"><i class="bi bi-arrow-right-circle-fill me-2"></i> Lanjut</span>
-                            </button>
-                        </div>
-                    </form>
-                    <div id="selected-product-details" class="mt-3" style="display: none;">
-                        <hr>
-                        <p class="mb-1 text-body"><strong class="me-2 text-secondary"><i class="bi bi-box-seam"></i> Produk:</strong> <span id="selected-product-name" class="text-body-secondary"></span></p>
-                        <p class="mb-1 text-body"><strong class="me-2 text-success"><i class="bi bi-tag-fill"></i> Harga:</strong> <span id="selected-product-price" class="text-primary fw-bold"></span></p>
-                        <p id="selected-product-note" class="small text-body-secondary mt-2 border-start border-3 border-info ps-2 mb-0"></p>
                     </div>
-                    <div id="error-message" class="alert alert-danger mt-3 d-none" role="alert">
-                         <i class="bi bi-exclamation-triangle-fill me-2"></i> <span id="error-message-text"></span>
+                    <div class="carousel-item">
+                        <img src="https://files.catbox.moe/eabe85.jpg" class="d-block w-100" alt="Banner 2">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5 class="fw-bold">Top Up Instan</h5>
+                            <p>Proses cepat, aman, dan terpercaya dalam hitungan detik.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://files.catbox.moe/eabe85.jpg" class="d-block w-100" alt="Banner 3">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5 class="fw-bold">Support 24/7</h5>
+                            <p>Tim customer service kami siap membantu kapanpun.</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Modern Services Section -->
+        <section class="mb-5">
+            <div class="text-center mb-5">
+                <h1 class="fw-bold display-4 mb-3" style="background: linear-gradient(135deg, var(--bs-primary), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Layanan Premium</h1>
+                <p class="lead text-body-secondary">Solusi digital lengkap untuk kebutuhan modern Anda</p>
+            </div>
+            
+            <div id="main-service-row" class="row g-4 justify-content-center">
+                <!-- Main Service Cards -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card selection-item h-100" data-type="topup">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                            <div class="card-icon"><i class="bi bi-phone-vibrate"></i></div>
+                            <h5 class="card-title">Top Up Digital</h5>
+                            <p class="card-text">Isi ulang pulsa, paket data, voucher game, dan berbagai produk digital lainnya dengan harga terbaik.</p>
+                            <span class="badge bg-primary mt-3">Mulai dari Rp5.000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card selection-item h-100" data-type="panel">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                            <div class="card-icon"><i class="bi bi-grid"></i></div>
+                            <h5 class="card-title">Produk Lainnya</h5>
+                            <p class="card-text">Jelajahi berbagai produk digital menarik lainnya seperti voucher streaming, e-money, dan subscription.</p>
+                            <span class="badge bg-primary mt-3">100+ Produk</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card selection-item guide-card h-100" data-type="panduan">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                            <div class="card-icon"><i class="bi bi-journal-bookmark-fill"></i></div>
+                            <h5 class="card-title">Panduan Membeli</h5>
+                            <p class="card-text">Pelajari cara bertransaksi dengan mudah dan benar. Panduan lengkap untuk pemula.</p>
+                            <span class="badge bg-light text-dark mt-3">Baca Panduan</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <h3 class="fw-semibold mb-3">Pilih Produk</h3>
-            <div id="product-list" class="row g-3 g-lg-4"></div>
-        </div>
+        </section>
 
+        <!-- Modern Feedback Form -->
+        <section>
+            <div class="card feedback-form-card shadow">
+                <div class="card-body">
+                    <h2 class="card-title mb-4 fw-bold text-center">
+                        <i class="bi bi-chat-heart-fill me-2" style="color: var(--bs-primary);"></i>
+                        Kirim Masukan
+                    </h2>
+                    <p class="text-center text-body-secondary mb-4">Kami menghargai setiap masukan dari Anda untuk menjadi lebih baik</p>
+                    
+                    <form id="feedbackForm">
+                        <div class="mb-4">
+                            <label for="namaLengkap" class="form-label">Nama Lengkap</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control" id="namaLengkap" placeholder="Masukkan nama Anda" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="pesanMasukan" class="form-label">Pesan Masukan</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-chat"></i></span>
+                                <textarea class="form-control" id="pesanMasukan" rows="4" placeholder="Tulis masukan, saran, atau kritik Anda..." required></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" id="sendFeedbackBtn" class="btn btn-primary btn-lg">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span class="btn-text"><i class="bi bi-send me-2"></i>Kirim Masukan</span>
+                            </button>
+                        </div>
+                        
+                        <div id="feedbackMessage" class="d-none"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer class="bg-body-tertiary py-4 text-center text-body-secondary border-top">
-         <div class="container">
-             <p class="mb-0">© 2026 PlayTopUp. Semua Hak Cipta Dilindungi.</p>
-         </div>
+    <!-- Modern Footer -->
+    <footer class="custom-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <h5><i class="bi bi-info-circle me-2"></i>Tentang Kami</h5>
+                    <p class="text-body-secondary" style="line-height: 1.8;">KinzxxPedia adalah platform digital terpercaya yang menyediakan berbagai layanan top up dan produk digital dengan pengalaman terbaik untuk pelanggan.</p>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <h5><i class="bi bi-link me-2"></i>Tautan Cepat</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#"><i class="bi bi-chevron-right me-2" style="font-size: 0.8rem;"></i>Syarat & Ketentuan</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right me-2" style="font-size: 0.8rem;"></i>Kebijakan Privasi</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right me-2" style="font-size: 0.8rem;"></i>Pusat Bantuan</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right me-2" style="font-size: 0.8rem;"></i>Hubungi Kami</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-4 col-md-12">
+                    <h5><i class="bi bi-share me-2"></i>Ikuti Kami</h5>
+                    <div class="social-icons mb-4">
+                        <a href="https://www.youtube.com/c/ipulshopstore" target="_blank"><i class="bi bi-youtube"></i></a>
+                        <a href="https://wa.me//62895379234782" target="_blank"><i class="bi bi-whatsapp"></i></a>
+                        <a href="https://t.me/kinzxxoffc" target="_blank"><i class="bi bi-telegram"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-instagram"></i></a>
+                    </div>
+                    
+                    <div class="contact-info">
+                        <p class="mb-2"><i class="bi bi-envelope me-2"></i>ifuumar794@gmail.com</p>
+                        <p class="mb-0"><i class="bi bi-telephone me-2"></i>+62 895 379 234 782</p>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-4" style="border-color: var(--bs-border-color); opacity: 0.3;">
+            
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0 text-body-secondary" style="font-size: 0.95rem;">&copy; 2025 KinzxxPedia. All rights reserved. Made with <i class="bi bi-heart-fill" style="color: #ff4d4d;"></i> for digital solutions</p>
+                </div>
+            </div>
+        </div>
     </footer>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
     const theme = {
         init() {
@@ -489,7 +734,9 @@ footer {
             const event = new Event('themeChange');
             document.getElementById('bg-canvas').dispatchEvent(event);
         },
-        toggle() { this.applyTheme(document.documentElement.getAttribute('data-bs-theme') === 'light' ? 'dark' : 'light'); }
+        toggle() { 
+            this.applyTheme(document.documentElement.getAttribute('data-bs-theme') === 'light' ? 'dark' : 'light'); 
+        }
     };
 
     const canvasAnimation = {
@@ -497,343 +744,226 @@ footer {
             this.canvas = document.getElementById('bg-canvas');
             this.ctx = this.canvas.getContext('2d');
             this.particles = [];
-            this.particleCount = window.innerWidth > 768 ? 80 : 30;
-            this.connectDistance = 120;
+            this.particleCount = window.innerWidth > 768 ? 50 : 25;
+            this.connectDistance = 150;
             window.addEventListener('resize', () => this.resize());
             this.canvas.addEventListener('themeChange', () => this.updateColors());
-            this.resize(); this.animate();
+            this.resize(); 
+            this.animate();
         },
         resize() {
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
-            this.particleCount = window.innerWidth > 768 ? 80 : 30;
+            this.initParticles();
+            this.updateColors();
+        },
+        initParticles() {
             this.particles = [];
             for (let i = 0; i < this.particleCount; i++) {
                 this.particles.push({
-                    x: Math.random() * this.canvas.width, y: Math.random() * this.canvas.height,
-                    dx: (Math.random() - 0.5) * 0.4, dy: (Math.random() - 0.5) * 0.4,
-                    radius: Math.random() * 1.5 + 1,
+                    x: Math.random() * this.canvas.width,
+                    y: Math.random() * this.canvas.height,
+                    dx: (Math.random() - 0.5) * 0.3,
+                    dy: (Math.random() - 0.5) * 0.3,
+                    radius: Math.random() * 2 + 1,
                 });
             }
-             this.updateColors();
         },
         updateColors() {
-             this.particleColor = getComputedStyle(document.documentElement).getPropertyValue('--bs-border-color').trim();
-             this.ctx.fillStyle = this.particleColor;
-             this.ctx.strokeStyle = this.particleColor;
+            const primaryRgb = getComputedStyle(document.documentElement).getPropertyValue('--bs-primary-rgb').trim();
+            this.particleColor = `rgba(${primaryRgb}, 0.3)`;
+            this.lineColor = `rgba(${primaryRgb}, 0.1)`;
         },
         animate() {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.updateColors();
-
+            
             this.particles.forEach(p => {
-                p.x += p.dx; p.y += p.dy;
+                p.x += p.dx;
+                p.y += p.dy;
+                
                 if (p.x < 0 || p.x > this.canvas.width) p.dx *= -1;
                 if (p.y < 0 || p.y > this.canvas.height) p.dy *= -1;
-                this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); this.ctx.fill();
+                
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                this.ctx.fillStyle = this.particleColor;
+                this.ctx.fill();
             });
+            
             for (let i = 0; i < this.particles.length; i++) {
                 for (let j = i + 1; j < this.particles.length; j++) {
                     const dist = Math.hypot(this.particles[i].x - this.particles[j].x, this.particles[i].y - this.particles[j].y);
                     if (dist < this.connectDistance) {
-                        this.ctx.beginPath(); this.ctx.globalAlpha = 1 - dist / this.connectDistance;
+                        this.ctx.beginPath();
+                        this.ctx.strokeStyle = this.lineColor;
+                        this.ctx.lineWidth = 0.5;
+                        this.ctx.globalAlpha = 1 - dist / this.connectDistance;
                         this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
                         this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
                         this.ctx.stroke();
                     }
                 }
             }
-            this.ctx.globalAlpha = 1; requestAnimationFrame(() => this.animate());
+            
+            this.ctx.globalAlpha = 1;
+            requestAnimationFrame(() => this.animate());
         }
     };
 
-    const app = {
-        allProducts: [], state: { category: null, provider: null, product: null, },
-        elements: {
-            views: document.querySelectorAll('.view'),
-            loaderView: document.getElementById('loader-view'),
-            loaderContent: document.getElementById('loader-content'),
-            loaderError: document.getElementById('loader-error'),
-            loaderErrorText: document.getElementById('loader-error-text'),
-            categoryList: document.getElementById('category-list'),
-            providerList: document.getElementById('provider-list'), productList: document.getElementById('product-list'),
-            providerTitle: document.getElementById('provider-title'), productTitle: document.getElementById('product-title'),
-            backButtons: document.querySelectorAll('[data-target]'), orderForm: document.getElementById('order-form'),
-            tujuanInput: document.getElementById('tujuan'), selectedProductDetails: document.getElementById('selected-product-details'),
-            selectedProductName: document.getElementById('selected-product-name'),
-            selectedProductPrice: document.getElementById('selected-product-price'),
-            selectedProductNote: document.getElementById('selected-product-note'),
-            submitButton: document.getElementById('submit-button'), submitButtonText: document.querySelector('#submit-button .btn-text'), submitButtonLoader: document.querySelector('#submit-button .btn-loader'),
-            errorMessage: document.getElementById('error-message'), errorMessageText: document.getElementById('error-message-text'),
-        },
-
+    const sidebar = {
         init() {
-            theme.init(); canvasAnimation.init(); this.bindEvents();
-            this.showView('loader-view');
-            this.fetchAndLoadProducts();
-        },
-
-        async showView(viewId) {
-            const currentView = document.querySelector('.view.active');
-            const targetView = document.getElementById(viewId);
-
-            if (currentView === targetView) return;
-
-            if (currentView) {
-                currentView.classList.add('hiding');
-                currentView.classList.remove('active');
-                await new Promise(resolve => {
-                    const handler = () => {
-                        currentView.classList.remove('hiding');
-                        currentView.style.display = 'none';
-                        currentView.removeEventListener('animationend', handler);
-                        resolve();
-                    };
-                     currentView.addEventListener('animationend', handler, { once: true });
+            this.sidebar = document.getElementById('sidebar');
+            this.sidebarToggle = document.getElementById('sidebarToggle');
+            this.sidebarClose = document.getElementById('sidebarClose');
+            this.sidebarOverlay = document.getElementById('sidebarOverlay');
+            
+            if (!this.sidebarOverlay) {
+                this.createOverlay();
+            }
+            
+            this.sidebarToggle.addEventListener('click', () => this.open());
+            this.sidebarClose.addEventListener('click', () => this.close());
+            this.sidebarOverlay.addEventListener('click', () => this.close());
+            
+            const sidebarItems = this.sidebar.querySelectorAll('.sidebar-item[data-type]');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const serviceType = item.dataset.type;
+                    this.navigateToService(serviceType);
+                    this.close();
                 });
-            }
-             targetView.style.display = 'block';
-            targetView.classList.add('active');
-        },
-
-        async fetchAndLoadProducts() {
-            this.elements.loaderContent.classList.remove('d-none');
-            this.elements.loaderError.classList.add('d-none');
-            this.elements.loaderErrorText.textContent = '';
-
-            try {
-                const response = await fetch('/api/layanan');
-                const data = await response.json();
-
-                if (!response.ok || !data.success) {
-                     const errorMsg = data.message || `Gagal memuat data: ${response.status}`;
-                     throw new Error(errorMsg);
-                }
-                if (!data.data || !Array.isArray(data.data)) {
-                    throw new Error('Format data layanan tidak valid.');
-                }
-
-                this.allProducts = data.data;
-
-                if (this.allProducts.length === 0) {
-                    throw new Error('Tidak ada layanan yang tersedia saat ini.');
-                }
-
-                this.renderCategories();
-                this.showView('category-view');
-
-            } catch (error) {
-                this.elements.loaderContent.classList.add('d-none');
-                this.elements.loaderErrorText.textContent = error.message || 'Terjadi kesalahan saat memuat layanan.';
-                this.elements.loaderError.classList.remove('d-none');
-                 this.showView('loader-view');
-            }
-        },
-
-        bindEvents() {
-            this.elements.backButtons.forEach(btn => btn.addEventListener('click', (e) => {
-                const targetViewId = e.currentTarget.dataset.target;
-                if (targetViewId === 'provider-view') {
-                    this.renderProviders(this.state.category);
-                } else if (targetViewId === 'category-view') {
-                     this.renderCategories();
-                }
-                 this.state.product = null;
-                 this.resetProductSelection();
-                this.showView(targetViewId);
-            }));
-
-            this.elements.orderForm.addEventListener('submit', (e) => this.handleSubmit(e));
-
-             this.elements.productList.addEventListener('click', (e) => {
-                 const card = e.target.closest('.selection-item');
-                 if (card && this.elements.productList.contains(card)) {
-                     const productCode = card.dataset.key;
-                     const selectedProduct = this.allProducts.find(p => p.code === productCode);
-
-                     if (selectedProduct && selectedProduct.status === 'available') {
-                         this.elements.productList.querySelectorAll('.card').forEach(item => item.classList.remove('active'));
-                         card.classList.add('active');
-                         this.state.product = selectedProduct;
-                         this.updateOrderForm();
-                         this.checkFormValidity();
-                     } else {
-                        this.showError('Produk ini sedang tidak tersedia.');
-                        this.state.product = null;
-                         this.resetProductSelection();
-                         this.checkFormValidity();
-                     }
-                 }
             });
-
-             this.elements.categoryList.addEventListener('click', (e) => {
-                 const card = e.target.closest('.selection-item');
-                  if (card && this.elements.categoryList.contains(card)) {
-                     const categoryName = card.dataset.key;
-
-                     this.state.category = categoryName;
-                     this.renderProviders(this.state.category);
-                     this.showView('provider-view');
-                 }
-             });
-
-             this.elements.providerList.addEventListener('click', (e) => {
-                 const card = e.target.closest('.selection-item');
-                 if (card && this.elements.providerList.contains(card)) {
-                     this.state.provider = card.dataset.key;
-                     this.renderProducts(this.state.category, this.state.provider);
-                     this.showView('product-view');
-                 }
-             });
-
-             this.elements.tujuanInput.addEventListener('input', () => this.checkFormValidity());
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') this.close();
+            });
         },
-
-        checkFormValidity() {
-             const isProductSelected = this.state.product !== null && this.state.product.status === 'available';
-             const isTujuanEntered = this.elements.tujuanInput.value.trim() !== '';
-             this.elements.submitButton.disabled = !(isProductSelected && isTujuanEntered);
+        createOverlay() {
+            const overlay = document.createElement('div');
+            overlay.className = 'sidebar-overlay';
+            overlay.id = 'sidebarOverlay';
+            document.body.appendChild(overlay);
+            this.sidebarOverlay = overlay;
         },
-
-        renderItem(item, type) {
-            let imgHtml = '';
-            if (item.img && item.img !== 'null') {
-                const imgSize = type === 'product' ? '30px' : '40px';
-                imgHtml = `<img src="${item.img}" alt="${item.name}" style="height: ${imgSize}; object-fit: contain;" class="mb-2" onerror="this.style.display='none'">`;
-            } else if (type !== 'product') {
-                 imgHtml = `<i class="bi bi-grid-fill fs-3 text-primary mb-2"></i>`;
-                 if(type === 'category') {
-                     if(item.name.toLowerCase().includes('game')) imgHtml = `<i class="bi bi-controller fs-3 text-primary mb-2"></i>`;
-                     else if(item.name.toLowerCase().includes('pulsa')) imgHtml = `<i class="bi bi-phone fs-3 text-primary mb-2"></i>`;
-                     else if(item.name.toLowerCase().includes('data')) imgHtml = `<i class="bi bi-database fs-3 text-primary mb-2"></i>`;
-                     else if(item.name.toLowerCase().includes('listrik') || item.name.toLowerCase().includes('token')) imgHtml = `<i class="bi bi-lightbulb fs-3 text-primary mb-2"></i>`;
-                      else if(item.name.toLowerCase().includes('uang digital') || item.name.toLowerCase().includes('e-money')) imgHtml = `<i class="bi bi-wallet2 fs-3 text-primary mb-2"></i>`;
-                      else if(item.name.toLowerCase().includes('vocer') || item.name.toLowerCase().includes('voucher')) imgHtml = `<i class="bi bi-ticket-perforated fs-3 text-primary mb-2"></i>`;
-                      else if(item.name.toLowerCase().includes('streaming') || item.name.toLowerCase().includes('tv')) imgHtml = `<i class="bi bi-tv fs-3 text-primary mb-2"></i>`;
-                      else if(item.name.toLowerCase().includes('lainnya')) imgHtml = `<i class="bi bi-three-dots fs-3 text-primary mb-2"></i>`;
-                 }
-            }
-
-            let statusHtml = '';
-            let noteHtml = '';
-            let itemClass = 'selection-item';
-            if (type === 'product') {
-                 itemClass += ` status-${item.status}`;
-                 statusHtml = `<div class="text-body-secondary small">${item.status === 'available' ? '<span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i> Tersedia</span>' : '<span class="badge bg-danger-subtle text-danger"><i class="bi bi-x-circle-fill me-1"></i> Tidak Tersedia</span>'}</div>`;
-                 if (item.note) {
-                     noteHtml = `<div class="product-note">${item.note}</div>`;
-                 }
-            }
-
-            return `
-                <div class="col-6 col-md-4 col-lg-2">
-                    <div class="card ${itemClass} h-100 shadow-sm" data-key="${item.code || item.name}">
-                        <div class="card-body d-flex flex-column justify-content-start align-items-center text-center p-2 p-lg-3">
-                            ${imgHtml}
-                            <div class="fw-semibold small text-truncate w-100 px-1">${item.name}</div>
-                            ${item.price !== undefined ? `<div class="small fw-bold text-primary mt-1">Rp ${parseInt(item.price).toLocaleString('id-ID')}</div>` : ''}
-                             ${type === 'product' ? statusHtml + noteHtml : ''}
-                        </div>
-                    </div>
-                </div>`;
+        open() {
+            this.sidebar.classList.add('open');
+            this.sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
         },
-        renderCategories() {
-            this.state = { category: null, provider: null, product: null };
-            const categories = [...new Set(this.allProducts.map(p => p.category))].sort();
-            this.elements.categoryList.innerHTML = categories.map(cat => this.renderItem({name: cat, key: cat}, 'category')).join('');
-             this.resetProductSelection();
+        close() {
+            this.sidebar.classList.remove('open');
+            this.sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
         },
-        renderProviders(category) {
-            this.state.provider = null; this.state.product = null;
-            this.resetProductSelection();
-            this.elements.providerTitle.textContent = category;
-            const providers = [...new Set(this.allProducts.filter(p => p.category === category).map(p => JSON.stringify({name: p.provider, img: p.img_url})))].map(p => JSON.parse(p)).sort((a, b) => a.name.localeCompare(b.name));
-             if (providers.length === 0) {
-                 this.elements.providerList.innerHTML = '<div class="col-12"><div class="alert alert-info text-center" role="alert"><i class="bi bi-info-circle-fill me-2"></i> Provider tidak tersedia untuk kategori ini.</div></div>';
-             } else {
-                this.elements.providerList.innerHTML = providers.map(p => this.renderItem({name: p.name, img: p.img, key: p.name}, 'provider')).join('');
-             }
-        },
-        renderProducts(category, provider) {
-            this.state.product = null;
-            this.resetProductSelection();
-            this.elements.productTitle.textContent = provider;
-            const products = this.allProducts.filter(p => p.category === category && p.provider === provider).sort((a, b) => parseInt(a.price) - parseInt(b.price));
-             if (products.length === 0) {
-                 this.elements.productList.innerHTML = '<div class="col-12"><div class="alert alert-info text-center" role="alert"><i class="bi bi-info-circle-fill me-2"></i> Produk tidak tersedia untuk provider ini.</div></div>';
-             } else {
-                this.elements.productList.innerHTML = products.map(p => this.renderItem(p, 'product')).join('');
-            }
-        },
-        updateOrderForm() {
-            this.elements.errorMessage.classList.add('d-none');
-            this.elements.errorMessageText.textContent = '';
-
-            if (!this.state.product || this.state.product.status !== 'available') {
-                this.elements.selectedProductDetails.style.display = 'none';
-                 this.checkFormValidity();
-                return;
-            }
-            this.elements.selectedProductDetails.style.display = 'block';
-            this.elements.selectedProductName.textContent = this.state.product.name;
-            this.elements.selectedProductPrice.textContent = `Rp ${parseInt(this.state.product.price).toLocaleString('id-ID')}`;
-            if (this.state.product.note) { this.elements.selectedProductNote.textContent = this.state.product.note; this.elements.selectedProductNote.style.display = 'block'; }
-            else { this.elements.selectedProductNote.style.display = 'none'; }
-
-             this.checkFormValidity();
-        },
-        resetProductSelection() {
-            this.state.product = null;
-            this.elements.selectedProductDetails.style.display = 'none';
-            this.elements.productList.querySelectorAll('.card.active').forEach(item => item.classList.remove('active'));
-             this.checkFormValidity();
-             this.elements.errorMessage.classList.add('d-none');
-        },
-        async handleSubmit(event) {
-            event.preventDefault();
-            const { product } = this.state; const tujuan = this.elements.tujuanInput.value.trim();
-            if (!product || product.status !== 'available' || !tujuan) {
-                this.showError('Pilih produk yang tersedia dan isi nomor tujuan terlebih dahulu.');
-                this.checkFormValidity();
-                return;
-            }
-
-            const btn = this.elements.submitButton;
-            btn.disabled = true;
-            btn.classList.add('submitting');
-
-            this.elements.errorMessage.classList.add('d-none');
-            this.elements.errorMessageText.textContent = '';
-
-            try {
-                // Send the marked-up price obtained from /api/layanan to /api/buat-transaksi
-                const response = await fetch('/api/buat-transaksi', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ code: product.code, tujuan: tujuan, price: product.price }) // price sent is the marked-up one
-                });
-                const data = await response.json();
-
-                if (!response.ok || !data.success) {
-                     const errorMsg = data.message || `Transaksi gagal: ${response.statusText || response.status}`;
-                     throw new Error(errorMsg);
-                }
-                sessionStorage.setItem('pendingTransaction', JSON.stringify(data));
-                window.location.href = '/payment';
-
-            } catch (error) {
-                this.showError(error.message);
-                btn.disabled = false;
-                btn.classList.remove('submitting');
-            }
-        },
-        showError(message) {
-            this.elements.errorMessageText.textContent = message;
-            this.elements.errorMessage.classList.remove('d-none');
+        navigateToService(serviceType) {
+            // Add your navigation logic here
+            console.log('Navigating to:', serviceType);
+            alert(`Fitur ${serviceType} akan segera hadir!`);
         }
     };
 
-    document.addEventListener('DOMContentLoaded', () => app.init());
+    document.addEventListener('DOMContentLoaded', () => {
+        theme.init();
+        canvasAnimation.init();
+        sidebar.init();
+        
+        const mainServiceRow = document.getElementById('main-service-row');
+        const feedbackForm = document.getElementById('feedbackForm');
+        const sendFeedbackBtn = document.getElementById('sendFeedbackBtn');
+        const feedbackMessageDiv = document.getElementById('feedbackMessage');
+        
+        mainServiceRow.addEventListener('click', (e) => {
+            const card = e.target.closest('.selection-item');
+            if (card) {
+                const serviceType = card.dataset.type;
+                let message = '';
+                switch(serviceType) {
+                    case 'topup':
+                        message = 'Fitur Top Up Digital akan segera hadir!';
+                        break;
+                    case 'panel':
+                        message = 'Fitur Produk Lainnya akan segera hadir!';
+                        break;
+                    case 'panduan':
+                        message = 'Fitur Panduan Membeli akan segera hadir!';
+                        break;
+                }
+                alert(message);
+            }
+        });
+        
+        feedbackForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const TELEGRAM_BOT_TOKEN = '8576430314:AAExsi0NGjdEcOMMrm3GFDvu5wulniddJZY';
+            const TELEGRAM_CHAT_ID = '6797348304';
+            const nama = feedbackForm.elements.namaLengkap.value.trim();
+            const pesan = feedbackForm.elements.pesanMasukan.value.trim();
+            
+            if (!nama || !pesan) {
+                showFeedbackMessage('Nama dan pesan tidak boleh kosong.', 'danger');
+                return;
+            }
+            
+            sendFeedbackBtn.disabled = true;
+            sendFeedbackBtn.classList.add('loading');
+            feedbackMessageDiv.classList.add('d-none');
+            
+            const messageText = `<b>📱 Masukan Baru dari KinzxxPedia</b>\n\n` +
+                              `<b>Dari:</b> ${nama}\n` +
+                              `<b>Pesan:</b> ${pesan}\n\n` +
+                              `<i>Dikirim via website</i>`;
+            
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: messageText,
+                        parse_mode: 'HTML'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.ok) {
+                    showFeedbackMessage('Terima kasih! Masukan Anda telah terkirim.', 'success');
+                    feedbackForm.reset();
+                } else {
+                    throw new Error(data.description || 'Gagal mengirim');
+                }
+            } catch (error) {
+                showFeedbackMessage('Maaf, terjadi kesalahan. Silakan coba lagi.', 'danger');
+            } finally {
+                sendFeedbackBtn.disabled = false;
+                sendFeedbackBtn.classList.remove('loading');
+            }
+        });
+        
+        function showFeedbackMessage(message, type) {
+            feedbackMessageDiv.textContent = message;
+            feedbackMessageDiv.className = `alert alert-${type} text-center mt-4`;
+            feedbackMessageDiv.classList.remove('d-none');
+            
+            setTimeout(() => {
+                feedbackMessageDiv.classList.add('d-none');
+            }, 5000);
+        }
+    });
+    </script>
+
+    <!-- Tawk.to Script -->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/68d7f9c384c419194f0dba9d/1j65qf9eq';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
     </script>
 </body>
 </html>
