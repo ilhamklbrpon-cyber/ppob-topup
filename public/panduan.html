@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kinzxxPedia · Panduan PPOB Modern</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font untuk kesan modern: Inter sebagai default, plus fallback -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1A5FFF;        /* lebih cerah, bold */
+            --primary-dark: #0a3bb5;
+            --soft-bg: #F2F5FF;
+            --card-bg: #ffffff;
+            --text-dark: #1E293B;
+            --text-muted: #64748B;
+            --accent-light: #D9E4FF;
+            --border-light: #E9EEF4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --shadow-sm: 0 10px 25px -5px rgba(0,0,0,0.03), 0 8px 10px -6px rgba(0,0,0,0.02);
+            --shadow-md: 0 20px 30px -10px rgba(26,95,255,0.12);
+            --shadow-hover: 0 30px 40px -15px rgba(26,95,255,0.25);
+            --radius-card: 22px;
+            --radius-element: 18px;
+            --transition: all 0.25s ease;
+        }
+
+        body {
+            background-color: #F9FAFE;
+            background-image: radial-gradient(circle at 0% 30%, rgba(26, 95, 255, 0.02) 0%, transparent 30%),
+                              radial-gradient(circle at 100% 70%, rgba(100, 116, 139, 0.02) 0%, transparent 40%);
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* header modern dengan glassmorphism tipis */
+        header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 0.8rem 0;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.7rem;
+            letter-spacing: -0.5px;
+            color: var(--primary-dark);
+        }
+
+        .logo i {
+            background: linear-gradient(145deg, var(--primary), #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 2rem;
+        }
+
+        .tagline {
+            color: var(--text-muted);
+            font-weight: 500;
+            background: rgba(26, 95, 255, 0.05);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(26,95,255,0.15);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 1.5rem auto 0;
+            padding: 0 2rem;
+        }
+
+        /* intro card */
+        .intro-card {
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 2.5rem 2rem;
+            margin-bottom: 2.8rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255,255,255,0.5);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .intro-card::after {
+            content: "📱";
+            position: absolute;
+            bottom: -15px;
+            right: 25px;
+            font-size: 5rem;
+            opacity: 0.1;
+            transform: rotate(10deg);
+            pointer-events: none;
+        }
+
+        .intro-card h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, var(--primary), #2563eb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.75rem;
+        }
+
+        .intro-card p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-dark);
+        }
+
+        .section-title i {
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            padding: 6px;
+            font-size: 1rem;
+        }
+
+        /* kategori grid lebih fresh */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 1.1rem;
+        }
+
+        .category-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 1.5rem 0.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(4px);
+        }
+
+        .category-card:hover {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: var(--shadow-md);
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--soft-bg);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary);
+            transition: var(--transition);
+            margin-bottom: 6px;
+        }
+
+        .category-card:hover .category-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .category-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            padding: 0 4px;
+        }
+
+        /* panduan section */
+        .guide-section {
+            display: none;
+            background: white;
+            border-radius: 36px;
+            padding: 2.5rem 2.2rem;
+            box-shadow: var(--shadow-md);
+            margin: 2.5rem 0 1rem;
+            border: 1px solid rgba(255,255,255,0.7);
+            animation: fadeSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeSlide {
+            0% { opacity: 0; transform: translateY(25px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .guide-header {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px dashed var(--border-light);
+        }
+
+        .guide-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, #4477ff 100%);
+            border-radius: 27px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: 0 15px 25px -8px rgba(26,95,255,0.5);
+        }
+
+        .guide-title {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .guide-sub {
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .guide-content {
+            padding-left: 0.5rem;
+        }
+
+        .guide-step {
+            background: var(--soft-bg);
+            padding: 1.2rem 1.8rem;
+            border-radius: 24px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            border-left: 6px solid var(--primary);
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.02);
+        }
+
+        .guide-step p {
+            font-size: 1.2rem;
+        }
+
+        .guide-example {
+            background: #F1F9F0;
+            border-radius: 22px;
+            padding: 1.2rem 1.8rem;
+            border-left: 6px solid var(--success);
+            margin: 1.2rem 0 1.8rem;
+            font-size: 1rem;
+        }
+
+        .guide-example strong, .special-note strong {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .special-note {
+            background: #fff7e5;
+            border-radius: 22px;
+            padding: 1.2rem 1.8rem;
+            border-left: 6px solid var(--warning);
+            margin: 1.5rem 0 2rem;
+        }
+
+        .highlight {
+            background: var(--accent-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .back-button {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--border-light);
+            font-weight: 600;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            margin-top: 1.8rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .back-button:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+            transform: translateX(-5px);
+        }
+
+        /* footer simpel */
+        footer {
+            text-align: center;
+            padding: 3rem 0 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-domain {
+            background: rgba(26,95,255,0.05);
+            display: inline-block;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid var(--border-light);
+            margin-top: 0.5rem;
+        }
+
+        /* whatsapp float */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 25px -5px rgba(37, 211, 102, 0.4);
+            z-index: 100;
+            transition: 0.2s;
+            border: 3px solid white;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1) rotate(3deg);
+            background: #20bd5b;
+        }
+
+        .whatsapp-float i {
+            color: white;
+            font-size: 2.2rem;
+        }
+
+        @media (max-width: 640px) {
+            .header-content {
+                flex-direction: column;
+                gap: 8px;
+                padding: 0 1rem;
+            }
+            .logo { font-size: 1.5rem; }
+            .intro-card h2 { font-size: 1.6rem; }
+            .guide-header { flex-direction: column; text-align: center; gap: 12px; }
+            .guide-icon { width: 70px; height: 70px; font-size: 2rem; }
+            .guide-title { font-size: 1.8rem; }
+            .container { padding: 0 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-bolt"></i>
+                <span>kinzxxPedia</span>
+            </div>
+            <div class="tagline">
+                <i class="fas fa-circle-info" style="margin-right: 6px;"></i>Panduan PPOB + Top Up
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- intro modern -->
+        <div class="intro-card">
+            <h2>Isi tujuan dengan tepat ✦</h2>
+            <p>Pilih kategori produk di bawah. Setiap panduan sudah disesuaikan dengan format yang benar agar transaksi langsung diproses.</p>
+        </div>
+
+        <!-- categories -->
+        <section class="categories-section">
+            <div class="section-title">
+                <i class="fa-solid fa-grid-2"></i>
+                <span>Kategori Layanan</span>
+            </div>
+            <div class="categories-grid" id="categoriesContainer"></div>
+        </section>
+
+        <!-- guide detail (hidden awal) -->
+        <section class="guide-section" id="guideSection"></section>
+    </main>
+
+    <!-- WA floating -->
+    <a href="https://wa.me/6283136711869" target="_blank" class="whatsapp-float" aria-label="Hubungi via WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 kinzxxPedia · semua panduan diperbaharui</p>
+            <div class="footer-domain">
+                🌐 <span class="highlight">kinzxxdeploy.vercel.app</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Data kategori lebih lengkap, konsisten dengan sebelumnya (bisa tambah jika perlu)
+        const categories = [
+            { id: "aktivasi-perdana", name: "Aktivasi Perdana", icon: "fas fa-sim-card", guide: "Masukkan <span class='highlight'>Nomor HP tujuan</span> (jika diminta)", example: "081234567890" },
+            { id: "aktivasi-voucher", name: "Aktivasi Voucher", icon: "fas fa-qrcode", guide: "Masukkan <span class='highlight'>Email atau kode</span> sesuai petunjuk produk", example: "email@contoh.com atau VCH123456" },
+            { id: "akun-premium", name: "Akun Premium", icon: "fas fa-user-shield", guide: "Masukkan <span class='highlight'>Email aktif</span>", example: "email@contoh.com", specialNote: "Khusus Netflix: Masukkan dengan format <span class='highlight'>Device,Lokasi</span>" },
+            { id: "netflix", name: "Netflix", icon: "fas fa-tv", guide: "Format: <span class='highlight'>Device,Lokasi</span>", example: "iPhone, Palembang" },
+            { id: "china-topup", name: "China TOPUP", icon: "fas fa-flag", guide: "Masukkan <span class='highlight'>ID atau nomor tujuan</span> platform China", example: "ID game / akun China" },
+            { id: "data-internet", name: "Data Internet", icon: "fas fa-wifi", guide: "Masukkan <span class='highlight'>Nomor HP tujuan</span>", example: "081234567890" },
+            { id: "e-money", name: "E-Money", icon: "fas fa-wallet", guide: "Masukkan <span class='highlight'>Nomor Tujuan</span> (DANA, OVO, dll)", example: "081234567890" },
+            { id: "games", name: "Games", icon: "fas fa-gamepad", guide: "Masukkan <span class='highlight'>User ID</span>", example: "123456789", specialNote: "Mobile Legends: <span class='highlight'>User ID dan Zone ID</span>" },
+            { id: "mobile-legends", name: "Mobile Legends", icon: "fas fa-mobile", guide: "Masukkan <span class='highlight'>User ID dan Zone ID</span>", example: "127818|1781" },
+            { id: "malaysia-topup", name: "Malaysia TOPUP", icon: "fas fa-flag", guide: "Masukkan <span class='highlight'>ID atau nomor tujuan</span> platform Malaysia", example: "ID game / akun MY" },
+            { id: "masa-aktif", name: "Masa Aktif", icon: "fas fa-clock", guide: "Masukkan <span class='highlight'>Nomor HP tujuan</span>", example: "081234567890" },
+            { id: "pln", name: "PLN", icon: "fas fa-bolt", guide: "Masukkan <span class='highlight'>ID Pelanggan PLN</span>", example: "12345678901" },
+            { id: "paket-sms-telepon", name: "Paket SMS & Telepon", icon: "fas fa-sms", guide: "Masukkan <span class='highlight'>Nomor HP tujuan</span>", example: "081234567890" },
+            { id: "philippines-topup", name: "Philippines TOPUP", icon: "fas fa-flag", guide: "Masukkan <span class='highlight'>ID atau nomor tujuan</span> platform Philippines", example: "ID game / PH akun" },
+            { id: "pulsa-reguler", name: "Pulsa Reguler", icon: "fas fa-mobile-alt", guide: "Masukkan <span class='highlight'>Nomor HP tujuan</span>", example: "081234567890" },
+            { id: "pulsa-transfer", name: "Pulsa Transfer", icon: "fas fa-exchange-alt", guide: "Masukkan <span class='highlight'>Nomor HP tujuan</span>", example: "081234567890" },
+            { id: "singapore-topup", name: "Singapore TOPUP", icon: "fas fa-flag", guide: "Masukkan <span class='highlight'>ID atau nomor tujuan</span> platform Singapore", example: "ID game / SG akun" },
+            { id: "streaming", name: "Streaming", icon: "fas fa-play-circle", guide: "Masukkan <span class='highlight'>ID pelanggan atau akun tujuan</span>", example: "123456789 / username" },
+            { id: "tv", name: "TV", icon: "fas fa-tv", guide: "Masukkan <span class='highlight'>ID pelanggan / akun</span>", example: "123456789 / username" },
+            { id: "thailand-topup", name: "Thailand TOPUP", icon: "fas fa-flag", guide: "Masukkan <span class='highlight'>ID tujuan</span> platform Thailand", example: "ID game / akun TH" },
+            { id: "vietnam-topup", name: "Vietnam TOPUP", icon: "fas fa-flag", guide: "Masukkan <span class='highlight'>ID tujuan</span> platform Vietnam", example: "ID game / akun VN" },
+            { id: "voucher", name: "Voucher", icon: "fas fa-ticket-alt", guide: "Masukkan <span class='highlight'>Nomor atau Email tujuan</span>", example: "081234567890 atau email@contoh.com" }
+        ];
+
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const guideSection = document.getElementById('guideSection');
+
+        function renderCategories() {
+            categoriesContainer.innerHTML = categories.map(cat => `
+                <div class="category-card" data-category="${cat.id}">
+                    <div class="category-icon"><i class="${cat.icon}"></i></div>
+                    <div class="category-name">${cat.name}</div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const id = card.dataset.category;
+                    showGuide(id);
+                });
+            });
+        }
+
+        function showGuide(categoryId) {
+            const category = categories.find(c => c.id === categoryId);
+            if (!category) return;
+
+            let extraNote = '';
+            if (category.specialNote) {
+                extraNote = `<div class="special-note"><strong>📌 Catatan Penting:</strong><br> ${category.specialNote}</div>`;
+            }
+
+            const guideHTML = `
+                <div class="guide-header">
+                    <div class="guide-icon"><i class="${category.icon}"></i></div>
+                    <div>
+                        <div class="guide-title">${category.name}</div>
+                        <div class="guide-sub">panduan kolom tujuan</div>
+                    </div>
+                </div>
+                <div class="guide-content">
+                    <div class="guide-step">
+                        <p>${category.guide}</p>
+                    </div>
+                    <div class="guide-example">
+                        <strong>✔ Contoh pengisian:</strong><br> ${category.example}
+                    </div>
+                    ${extraNote}
+                </div>
+                <button class="back-button" id="backFromGuide">
+                    <i class="fas fa-arrow-left"></i> Kembali ke kategori
+                </button>
+            `;
+
+            guideSection.innerHTML = guideHTML;
+            guideSection.style.display = 'block';
+            guideSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            document.getElementById('backFromGuide').addEventListener('click', () => {
+                guideSection.style.display = 'none';
+                document.querySelector('.categories-section').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        // inisialisasi
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategories();
+
+            // Smooth scroll untuk anchor (jika ada)
+            document.querySelectorAll('a[href^="#"]').forEach(a => {
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = document.querySelector(a.getAttribute('href'));
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+        });
+
+        // efek header scroll minor (opsional)
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 40) {
+                header.style.background = 'rgba(255,255,255,0.9)';
+                header.style.backdropFilter = 'blur(12px)';
+            } else {
+                header.style.background = 'rgba(255,255,255,0.8)';
+                header.style.backdropFilter = 'blur(10px)';
+            }
+        });
+    </script>
+</body>
+</html>

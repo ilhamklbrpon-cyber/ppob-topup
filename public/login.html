@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Portal · Neo</title>
+  <!-- Tailwind + fontawesome + google font -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    body {
+      background: radial-gradient(circle at 10% 30%, #1e1b4b, #0b0b1f 90%);
+      position: relative;
+    }
+    /* animated glow line */
+    .glow-line {
+      position: absolute;
+      inset: 0;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,50 Q25,30 50,50 T100,50" stroke="rgba(99,102,241,0.25)" fill="none" stroke-width="0.8" vector-effect="non-scaling-stroke"/></svg>');
+      background-size: cover;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .card-glow {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.02) inset, 0 0 30px 0 rgba(120, 80, 255, 0.2);
+    }
+    .neon-border {
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .neon-border:focus-within {
+      border-color: #a78bfa;
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.3), 0 0 15px rgba(167, 139, 250, 0.6);
+    }
+    .input-icon {
+      transition: all 0.2s;
+    }
+    .btn-shine {
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-shine::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(115deg, rgba(255,255,255,0) 10%, rgba(255,255,255,0.15) 30%, rgba(255,255,255,0) 50%);
+      transform: rotate(25deg);
+      animation: shine 6s infinite linear;
+    }
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(25deg); }
+      20% { transform: translateX(100%) rotate(25deg); }
+      100% { transform: translateX(200%) rotate(25deg); }
+    }
+    /* floating particles (tiny) */
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: rgba(180, 180, 255, 0.4);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center px-4 py-6 relative overflow-hidden">
+
+  <!-- subtle moving particles -->
+  <div class="absolute inset-0 overflow-hidden z-0">
+    <div class="particle" style="top: 12%; left: 85%; animation: float 14s infinite;"></div>
+    <div class="particle" style="top: 70%; left: 15%; width: 5px; height: 5px; background: rgba(160, 130, 255, 0.3); animation: float 19s infinite reverse;"></div>
+    <div class="particle" style="top: 30%; left: 45%; width: 4px; height: 4px; background: #c0b0ff; opacity: 0.3; animation: float 11s infinite;"></div>
+  </div>
+  <style>
+    @keyframes float {
+      0% { transform: translateY(0px) translateX(0px); }
+      33% { transform: translateY(-20px) translateX(10px); }
+      66% { transform: translateY(10px) translateX(-8px); }
+      100% { transform: translateY(0px) translateX(0px); }
+    }
+  </style>
+
+  <!-- main card with glassmorphism + dark theme -->
+  <div class="relative z-10 w-full max-w-md">
+    <div class="bg-[rgba(12,10,29,0.8)] backdrop-blur-xl rounded-3xl card-glow border border-white/10 p-8 md:p-10">
+      
+      <!-- decorative top icon with ring -->
+      <div class="flex justify-center mb-6 relative">
+        <div class="absolute inset-0 flex justify-center items-center -top-4">
+          <span class="h-12 w-12 rounded-full bg-indigo-600/20 blur-xl"></span>
+        </div>
+        <div class="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center shadow-2xl shadow-indigo-600/30 ring-2 ring-white/20">
+          <i class="fas fa-crown text-3xl text-white drop-shadow"></i>
+        </div>
+      </div>
+      
+      <!-- header text -->
+      <h1 class="text-4xl font-bold text-center bg-gradient-to-r from-indigo-200 via-white/90 to-purple-200 bg-clip-text text-transparent mb-1 tracking-tight">
+        Admin Access
+      </h1>
+      <p class="text-center text-indigo-300/70 text-sm font-medium mb-8">masuk ke panel kendali · aman & terenkripsi</p>
+      
+      <!-- login form -->
+      <form class="space-y-6" id="loginForm" onsubmit="event.preventDefault(); login();">
+        <!-- username field -->
+        <div class="group">
+          <label class="block text-sm font-semibold text-indigo-200/80 mb-2 ml-1 tracking-wide" for="username">
+            <i class="fa-regular fa-user mr-1 text-xs"></i> USERNAME
+          </label>
+          <div class="relative rounded-xl bg-[#1a172f] border border-indigo-500/30 neon-border transition-all duration-300">
+            <input 
+              class="w-full bg-transparent px-5 py-4 text-white placeholder-indigo-300/40 outline-none text-base font-medium" 
+              id="username" 
+              name="username" 
+              type="text" 
+              placeholder="admin@panel / username"
+              autocomplete="off"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-400/70 input-icon group-focus-within:text-indigo-300">
+              <i class="fa-regular fa-id-card text-lg"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- password field with show/hide toggle -->
+        <div class="group">
+          <label class="block text-sm font-semibold text-indigo-200/80 mb-2 ml-1 tracking-wide" for="password">
+            <i class="fa-regular fa-key mr-1 text-xs"></i> PASSWORD
+          </label>
+          <div class="relative rounded-xl bg-[#1a172f] border border-indigo-500/30 neon-border transition-all duration-300" id="passwordWrapper">
+            <input 
+              class="w-full bg-transparent px-5 py-4 text-white placeholder-indigo-300/40 outline-none text-base font-medium" 
+              id="password" 
+              name="password" 
+              type="password" 
+              placeholder="••••••••"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-400/70 cursor-pointer hover:text-indigo-300 transition" id="togglePassword">
+              <i class="fa-regular fa-eye-slash" id="toggleIcon"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- extra option: remember & forgot (styling only) -->
+        <div class="flex justify-between items-center text-sm text-indigo-300/60 px-1">
+          <label class="flex items-center gap-2 cursor-pointer hover:text-indigo-200 transition">
+            <input type="checkbox" class="w-4 h-4 rounded border-indigo-500/50 bg-indigo-900/20 accent-indigo-600" />
+            <span>ingat saya</span>
+          </label>
+          <a href="#" class="hover:text-indigo-300 transition border-b border-indigo-500/30 border-dotted">lupa password?</a>
+        </div>
+
+        <!-- submit button with shine effect & gradient -->
+        <button class="btn-shine w-full mt-4 bg-gradient-to-r from-indigo-700 via-indigo-600 to-purple-700 hover:from-indigo-600 hover:via-indigo-500 hover:to-purple-600 text-white font-semibold py-4 rounded-xl shadow-2xl shadow-indigo-800/40 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.99] border border-white/10" type="submit">
+          <span class="flex items-center justify-center gap-3 text-lg">
+            <i class="fas fa-arrow-right-to-bracket"></i> MASUK SEKARANG
+          </span>
+        </button>
+
+        <!-- error message with nice styling -->
+        <div id="error" class="text-center text-rose-300 font-medium min-h-[2rem] text-sm bg-rose-950/30 py-2 px-3 rounded-xl border border-rose-500/30 hidden"></div>
+        <!-- we keep hidden initially but js will show it -->
+      </form>
+
+      <!-- footer credit / badge -->
+      <div class="mt-8 text-center text-xs text-indigo-400/40 border-t border-indigo-500/10 pt-5">
+        <span class="inline-flex items-center gap-2"><i class="fas fa-shield-halved"></i> koneksi aman · panel v3.0</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- password visibility toggle ----------
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+
+    if (togglePassword) {
+      togglePassword.addEventListener('click', function () {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        toggleIcon.classList.toggle('fa-eye-slash');
+        toggleIcon.classList.toggle('fa-eye');
+      });
+    }
+
+    // ---------- login simulation + error handling ----------
+    async function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorBox = document.getElementById('error');
+
+      // make error visible (remove hidden)
+      errorBox.classList.remove('hidden');
+      
+      if (!username || !password) {
+        errorBox.textContent = '⚠️ username & password wajib diisi.';
+        return;
+      }
+
+      // simple front-end mock validation (since no backend)
+      // In real scenario, this would be a fetch to /login
+      // We simulate a successful login for demo only.
+      
+      // For demonstration, we use dummy admin: admin / rahasia
+      // show loading state on button
+      const submitBtn = document.querySelector('button[type="submit"]');
+      const originalHtml = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><i class="fas fa-circle-notch fa-spin"></i> Memverifikasi...</span>';
+      submitBtn.disabled = true;
+
+      // Simulate network delay
+      setTimeout(() => {
+        // dummy validation (for preview purpose)
+        if ((username === 'admin' && password === 'rahasia') || (username === 'demo' && password === 'demo123')) {
+          // success
+          errorBox.classList.add('hidden');
+          // redirect (simulate)
+          window.location.href = '/admin';   // actual redirect
+          // but to prevent page change in demo, we keep but you can remove preventDefault above? 
+          // we use event.preventDefault already, so it's safe.
+          // For demo preview, we show alert because window.location would break preview.
+          alert('✅ Login berhasil! (demo redirect ke /admin)');
+          // reset button anyway (but location change may interrupt)
+          submitBtn.innerHTML = originalHtml;
+          submitBtn.disabled = false;
+        } else {
+          errorBox.textContent = '✗ login gagal: username atau password salah.';
+          submitBtn.innerHTML = originalHtml;
+          submitBtn.disabled = false;
+        }
+      }, 800);
+      
+      /*  ====== UNCOMMENT THIS IF YOU HAVE REAL BACKEND ======
+      try {
+        const res = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username, password })
+        });
+        const result = await res.json();
+        if (result.success) {
+          window.location.href = '/admin';
+        } else {
+          errorBox.textContent = result.message || 'Login gagal, periksa kembali username dan password.';
+        }
+      } catch (err) {
+        errorBox.textContent = 'Terjadi kesalahan koneksi, coba lagi.';
+      }
+      */
+    }
+
+    // additional: if error box is empty, hide it.
+    // we check on every error change
+    const errorObserver = new MutationObserver(() => {
+      const errorBox = document.getElementById('error');
+      if (errorBox.textContent.trim() === '') {
+        errorBox.classList.add('hidden');
+      } else {
+        errorBox.classList.remove('hidden');
+      }
+    });
+    const errorElement = document.getElementById('error');
+    if (errorElement) {
+      errorObserver.observe(errorElement, { childList: true, subtree: true, characterData: true });
+    }
+
+    // also hide by default if empty on page load
+    window.addEventListener('load', function() {
+      const errorBox = document.getElementById('error');
+      if (errorBox.textContent.trim() === '') {
+        errorBox.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

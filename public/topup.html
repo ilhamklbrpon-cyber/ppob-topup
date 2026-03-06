@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TopUp Modern · kinzxxPedia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+        :root {
+            --bs-body-bg-rgb: 248, 250, 252;
+            --bs-tertiary-bg-rgb: 255, 255, 255;
+            --bs-border-color: rgba(0, 0, 0, 0.08);
+            --bs-primary-rgb: 79, 70, 229;
+            --bs-primary: #4f46e5;
+            --bs-primary-dark: #4338ca;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --card-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.07), 0 5px 12px -4px rgba(0, 0, 0, 0.05);
+        }
+        [data-bs-theme="dark"] {
+            --bs-body-bg-rgb: 10, 10, 15;
+            --bs-tertiary-bg-rgb: 20, 20, 28;
+            --bs-border-color: rgba(255, 255, 255, 0.08);
+            --bs-primary-rgb: 129, 140, 248;
+            --bs-primary: #818cf8;
+            --bs-primary-dark: #6366f1;
+            --glass-bg: rgba(20, 20, 28, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.03);
+            --card-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.5);
+        }
+        body { background-color: rgb(var(--bs-body-bg-rgb)); }
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; opacity: 0.3; }
+        .glass-nav, .glass-footer, .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+        }
+        .navbar { background: var(--glass-bg) !important; backdrop-filter: blur(12px); border-bottom: 1px solid var(--glass-border); }
+        .footer-custom { background: var(--glass-bg) !important; backdrop-filter: blur(8px); border-top: 1px solid var(--glass-border); }
+        
+        @keyframes float-in {
+            0% { opacity: 0; transform: translateY(20px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .view.active { animation: float-in 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        .view.hiding { animation: fadeOut 0.25s ease-in forwards; }
+        
+        .selection-item {
+            cursor: pointer;
+            border-radius: 1.25rem;
+            transition: all 0.25s ease;
+            border: 1px solid var(--bs-border-color);
+            background: var(--glass-bg);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 8px 20px -6px rgba(0,0,0,0.05);
+            height: 100%;
+            overflow: hidden;
+        }
+        .selection-item .card-body { padding: 1.25rem 0.75rem; transition: background 0.2s; }
+        .selection-item:hover:not(.status-unavailable) {
+            transform: translateY(-6px) scale(1.02);
+            border-color: var(--bs-primary);
+            box-shadow: 0 20px 30px -10px rgba(var(--bs-primary-rgb), 0.25);
+        }
+        .selection-item.active:not(.status-unavailable) {
+            border-color: var(--bs-primary) !important;
+            border-width: 2px;
+            box-shadow: 0 0 0 4px rgba(var(--bs-primary-rgb), 0.25);
+        }
+        .selection-item.status-unavailable { opacity: 0.5; filter: grayscale(0.6); cursor: not-allowed; }
+        
+        .badge-soft-success { background: rgba(16, 185, 129, 0.12); color: #10b981; font-weight: 500; padding: 0.35rem 0.8rem; border-radius: 50px; }
+        .badge-soft-danger { background: rgba(239, 68, 68, 0.12); color: #ef4444; font-weight: 500; padding: 0.35rem 0.8rem; border-radius: 50px; }
+        
+        .product-detail-badge {
+            background: rgba(var(--bs-primary-rgb), 0.08);
+            padding: 0.5rem 1rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+        }
+        #submit-button {
+            background: linear-gradient(145deg, var(--bs-primary), var(--bs-primary-dark));
+            border: none;
+            border-radius: 60px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: 0 10px 18px -8px rgba(var(--bs-primary-rgb), 0.5);
+            transition: all 0.15s ease;
+        }
+        #submit-button:disabled { opacity: 0.5; box-shadow: none; }
+        .input-group-custom .input-group-text {
+            background: var(--glass-bg);
+            border-right: none;
+            border-radius: 60px 0 0 60px;
+            border: 1px solid var(--bs-border-color);
+            padding-left: 1.2rem;
+        }
+        .input-group-custom .form-control {
+            background: var(--glass-bg);
+            border-left: none;
+            border-radius: 0 60px 60px 0;
+            border: 1px solid var(--bs-border-color);
+            padding: 0.8rem 1rem;
+        }
+        .input-group-custom .form-control:focus { box-shadow: none; border-color: var(--bs-primary); }
+        .back-button {
+            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
+            border-radius: 60px; background: var(--glass-bg); border: 1px solid var(--bs-border-color);
+            color: var(--bs-body-color); transition: 0.2s;
+        }
+        .back-button:hover { background: var(--bs-primary); color: white; border-color: var(--bs-primary); }
+        .theme-toggle-btn {
+            width: 45px; height: 45px; border-radius: 60px; background: var(--glass-bg);
+            border: 1px solid var(--bs-border-color); color: var(--bs-body-color);
+        }
+        .theme-toggle-btn:hover { background: var(--bs-primary); color: white; }
+        .loader-container { min-height: 70vh; gap: 1.5rem; }
+        .footer-custom p { opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <header class="navbar navbar-expand-lg sticky-top px-3 px-lg-4">
+        <nav class="container-fluid">
+            <a class="navbar-brand fw-bolder fs-3" href="/" style="background: linear-gradient(135deg, var(--bs-primary), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                <i class="bi bi-lightning-charge-fill me-1" style="color: var(--bs-primary); -webkit-text-fill-color: currentColor;"></i> kinzxxPedia
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <span class="d-none d-md-inline text-secondary fw-medium me-2">TopUp · cepat & aman</span>
+                <button id="theme-toggle" class="btn theme-toggle-btn p-0 fs-5" aria-label="Toggle theme">
+                    <i class="bi bi-sun-fill theme-icon-light"></i>
+                    <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container py-4 py-lg-5">
+
+        <!-- LOADER VIEW -->
+        <div id="loader-view" class="view active">
+            <div class="loader-container d-flex flex-column justify-content-center align-items-center">
+                <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status"></div>
+                <p class="mt-4 fs-5 fw-medium text-secondary">menyiapkan layanan terbaik...</p>
+                <div id="loader-error" class="alert alert-danger mt-4 d-none w-100 mx-auto" style="max-width: 500px;" role="alert">
+                    <i class="bi bi-x-octagon-fill me-2"></i> <span id="loader-error-text"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORY VIEW -->
+        <div id="category-view" class="view">
+            <div class="d-flex align-items-center justify-content-between mb-5">
+                <h1 class="display-6 fw-bold" style="background: linear-gradient(145deg, var(--bs-primary), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📦 Pilih Kategori</h1>
+                <span class="badge bg-primary bg-opacity-10 text-primary px-4 py-2 rounded-pill">✨ all digital</span>
+            </div>
+            <div id="category-list" class="row g-4"></div>
+        </div>
+
+        <!-- PROVIDER VIEW -->
+        <div id="provider-view" class="view">
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <button class="btn back-button" data-target="category-view" aria-label="Kembali"><i class="bi bi-arrow-left fs-5"></i></button>
+                <h2 class="fw-bold mb-0" id="provider-title" style="flex:1;">Provider</h2>
+            </div>
+            <div id="provider-list" class="row g-4"></div>
+        </div>
+
+        <!-- PRODUCT VIEW -->
+        <div id="product-view" class="view">
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <button class="btn back-button" data-target="provider-view" aria-label="Kembali"><i class="bi bi-arrow-left fs-5"></i></button>
+                <h2 class="fw-bold mb-0" id="product-title">Pilih Produk</h2>
+            </div>
+
+            <!-- FORM CARD MODERN -->
+            <div class="glass-card rounded-4 p-4 p-lg-5 mb-5">
+                <form id="order-form">
+                    <div class="row g-4 align-items-end">
+                        <div class="col-12 col-md-7">
+                            <label class="fw-semibold mb-2 text-secondary"><i class="bi bi-phone me-1"></i>Nomor / ID tujuan</label>
+                            <div class="input-group input-group-custom">
+                                <span class="input-group-text bg-transparent"><i class="bi bi-phone-vibrate fs-5" style="color: var(--bs-primary);"></i></span>
+                                <input type="text" id="tujuan" class="form-control bg-transparent" placeholder="contoh: 08123456789 / 123456" required>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-5">
+                            <button type="submit" id="submit-button" class="btn btn-primary w-100 py-3" disabled>
+                                <span class="btn-loader spinner-border spinner-border-sm me-2" role="status"></span>
+                                <span class="btn-text fw-semibold"><i class="bi bi-lightning-charge me-2"></i>Lanjut ke pembayaran</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Selected product details -->
+                <div id="selected-product-details" class="mt-4 pt-3 border-top border-1" style="display: none;">
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                        <div class="product-detail-badge"><i class="bi bi-box-seam me-2 text-primary"></i><span id="selected-product-name" class="fw-medium"></span></div>
+                        <div class="product-detail-badge"><i class="bi bi-tag-fill me-2 text-success"></i><span id="selected-product-price" class="fw-bold text-primary"></span></div>
+                        <div class="product-detail-badge" id="selected-product-note-wrap" style="display: none;"><i class="bi bi-info-circle me-2"></i><span id="selected-product-note"></span></div>
+                    </div>
+                </div>
+                <div id="error-message" class="alert alert-danger mt-3 d-none rounded-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> <span id="error-message-text"></span>
+                </div>
+            </div>
+
+            <h3 class="fw-semibold mb-4 d-flex align-items-center"><i class="bi bi-grid-3x3-gap-fill me-2 text-primary"></i>Daftar produk</h3>
+            <div id="product-list" class="row g-4"></div>
+        </div>
+    </main>
+
+    <footer class="footer-custom py-4 text-center mt-5">
+        <div class="container">
+            <p class="mb-0 small">© 2025 kinzxxPedia · elegan, cepat, terpercaya <i class="bi bi-dot"></i> all rights reserved</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function() {
+            // ---------- THEME & CANVAS (light/dark aware) ----------
+            const theme = {
+                init() {
+                    this.btn = document.getElementById('theme-toggle');
+                    this.apply(localStorage.getItem('theme') || 'light');
+                    this.btn?.addEventListener('click', () => this.toggle());
+                },
+                apply(themeName) {
+                    document.documentElement.setAttribute('data-bs-theme', themeName);
+                    localStorage.setItem('theme', themeName);
+                    window.dispatchEvent(new CustomEvent('themechange'));
+                },
+                toggle() {
+                    const current = document.documentElement.getAttribute('data-bs-theme');
+                    this.apply(current === 'light' ? 'dark' : 'light');
+                }
+            };
+
+            const canvasAnim = {
+                canvas: null, ctx: null, particles: [], connectDistance: 130,
+                init() {
+                    this.canvas = document.getElementById('bg-canvas');
+                    this.ctx = this.canvas.getContext('2d');
+                    window.addEventListener('resize', () => this.resize());
+                    window.addEventListener('themechange', () => this.updateColor());
+                    this.resize();
+                    this.animate();
+                },
+                resize() {
+                    this.canvas.width = window.innerWidth;
+                    this.canvas.height = window.innerHeight;
+                    this.particles = [];
+                    const count = Math.min(60, Math.floor(window.innerWidth * 0.08));
+                    for (let i = 0; i < count; i++) {
+                        this.particles.push({
+                            x: Math.random() * this.canvas.width, y: Math.random() * this.canvas.height,
+                            dx: (Math.random() - 0.5) * 0.3, dy: (Math.random() - 0.5) * 0.3,
+                            r: Math.random() * 2 + 1,
+                        });
+                    }
+                    this.updateColor();
+                },
+                updateColor() {
+                    const style = getComputedStyle(document.documentElement);
+                    this.strokeColor = style.getPropertyValue('--bs-border-color').trim() || '#aaa';
+                },
+                animate() {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    this.ctx.globalAlpha = 0.25;
+                    this.particles.forEach(p => {
+                        p.x += p.dx; p.y += p.dy;
+                        if (p.x < 0 || p.x > this.canvas.width) p.dx *= -1;
+                        if (p.y < 0 || p.y > this.canvas.height) p.dy *= -1;
+                        this.ctx.beginPath();
+                        this.ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+                        this.ctx.fillStyle = this.strokeColor;
+                        this.ctx.fill();
+                    });
+                    for (let i = 0; i < this.particles.length; i++) {
+                        for (let j = i+1; j < this.particles.length; j++) {
+                            const dx = this.particles[i].x - this.particles[j].x;
+                            const dy = this.particles[i].y - this.particles[j].y;
+                            const dist = Math.hypot(dx, dy);
+                            if (dist < this.connectDistance) {
+                                this.ctx.beginPath();
+                                this.ctx.globalAlpha = 0.12 * (1 - dist/this.connectDistance);
+                                this.ctx.strokeStyle = this.strokeColor;
+                                this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+                                this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+                                this.ctx.stroke();
+                            }
+                        }
+                    }
+                    this.ctx.globalAlpha = 1;
+                    requestAnimationFrame(() => this.animate());
+                }
+            };
+
+            // ---------- APP ----------
+            const app = {
+                allProducts: [], state: { category: null, provider: null, product: null },
+                els: {
+                    views: document.querySelectorAll('.view'),
+                    loaderView: document.getElementById('loader-view'),
+                    loaderContent: null, loaderError: document.getElementById('loader-error'), loaderErrorText: document.getElementById('loader-error-text'),
+                    categoryList: document.getElementById('category-list'),
+                    providerList: document.getElementById('provider-list'), productList: document.getElementById('product-list'),
+                    providerTitle: document.getElementById('provider-title'), productTitle: document.getElementById('product-title'),
+                    backButtons: document.querySelectorAll('[data-target]'), orderForm: document.getElementById('order-form'),
+                    tujuan: document.getElementById('tujuan'), selectedProductDetails: document.getElementById('selected-product-details'),
+                    selectedProductName: document.getElementById('selected-product-name'), selectedProductPrice: document.getElementById('selected-product-price'),
+                    selectedProductNote: document.getElementById('selected-product-note'), selectedProductNoteWrap: document.getElementById('selected-product-note-wrap'),
+                    submitButton: document.getElementById('submit-button'), errorMessage: document.getElementById('error-message'), errorMessageText: document.getElementById('error-message-text'),
+                },
+                async init() {
+                    theme.init(); canvasAnim.init();
+                    this.bindEvents();
+                    await this.fetchProducts();
+                },
+                async fetchProducts() {
+                    try {
+                        const resp = await fetch('/api/layanan');
+                        const data = await resp.json();
+                        if (!resp.ok || !data.success) throw new Error(data.message || 'gagal muat');
+                        if (!Array.isArray(data.data)) throw new Error('data tidak valid');
+                        this.allProducts = data.data;
+                        if (!this.allProducts.length) throw new Error('kosong');
+                        this.renderCategories();
+                        this.showView('category-view');
+                    } catch (e) {
+                        document.getElementById('loader-error-text').innerText = e.message;
+                        document.getElementById('loader-error').classList.remove('d-none');
+                        this.showView('loader-view');
+                    }
+                },
+                showView(viewId) {
+                    const active = document.querySelector('.view.active');
+                    const target = document.getElementById(viewId);
+                    if (active === target) return;
+                    if (active) {
+                        active.classList.add('hiding');
+                        active.classList.remove('active');
+                        setTimeout(() => {
+                            active.classList.remove('hiding');
+                            active.style.display = 'none';
+                        }, 240);
+                    }
+                    target.style.display = 'block';
+                    setTimeout(() => target.classList.add('active'), 20);
+                },
+                bindEvents() {
+                    this.els.backButtons.forEach(btn => btn.addEventListener('click', (e) => {
+                        const target = e.currentTarget.dataset.target;
+                        if (target === 'provider-view' && this.state.category) this.renderProviders(this.state.category);
+                        if (target === 'category-view') this.renderCategories();
+                        this.state.product = null; this.resetSelectedProduct();
+                        this.showView(target);
+                    }));
+                    this.els.orderForm.addEventListener('submit', (e) => this.handleSubmit(e));
+                    this.els.categoryList.addEventListener('click', (e) => {
+                        const card = e.target.closest('.selection-item');
+                        if (!card) return;
+                        this.state.category = card.dataset.key;
+                        this.renderProviders(this.state.category);
+                        this.showView('provider-view');
+                    });
+                    this.els.providerList.addEventListener('click', (e) => {
+                        const card = e.target.closest('.selection-item');
+                        if (!card) return;
+                        this.state.provider = card.dataset.key;
+                        this.renderProducts(this.state.category, this.state.provider);
+                        this.showView('product-view');
+                    });
+                    this.els.productList.addEventListener('click', (e) => {
+                        const card = e.target.closest('.selection-item');
+                        if (!card) return;
+                        const code = card.dataset.key;
+                        const product = this.allProducts.find(p => p.code === code);
+                        if (product?.status !== 'available') {
+                            this.showError('produk tidak tersedia');
+                            return;
+                        }
+                        this.els.productList.querySelectorAll('.active').forEach(c => c.classList.remove('active'));
+                        card.classList.add('active');
+                        this.state.product = product;
+                        this.updateFormDetail();
+                        this.checkForm();
+                    });
+                    this.els.tujuan.addEventListener('input', () => this.checkForm());
+                },
+                renderCategories() {
+                    this.state.category = null; this.state.provider = null; this.state.product = null; this.resetSelectedProduct();
+                    const cats = [...new Set(this.allProducts.map(p => p.category))].sort();
+                    this.els.categoryList.innerHTML = cats.map(c => this.renderItem({ name: c, code: c }, 'category')).join('');
+                },
+                renderProviders(cat) {
+                    this.state.provider = null; this.state.product = null; this.resetSelectedProduct();
+                    this.els.providerTitle.innerText = cat;
+                    const provs = [...new Set(this.allProducts.filter(p => p.category === cat).map(p => JSON.stringify({ name: p.provider, img: p.img_url })))].map(x => JSON.parse(x));
+                    if (!provs.length) { this.els.providerList.innerHTML = '<div class="col-12"><div class="alert alert-info text-center">tidak ada provider</div></div>'; return; }
+                    this.els.providerList.innerHTML = provs.map(p => this.renderItem({ name: p.name, code: p.name, img: p.img }, 'provider')).join('');
+                },
+                renderProducts(cat, prov) {
+                    this.state.product = null; this.resetSelectedProduct();
+                    this.els.productTitle.innerText = prov;
+                    const products = this.allProducts.filter(p => p.category === cat && p.provider === prov).sort((a,b) => a.price - b.price);
+                    if (!products.length) { this.els.productList.innerHTML = '<div class="col-12"><div class="alert alert-info text-center">produk tidak ditemukan</div></div>'; return; }
+                    this.els.productList.innerHTML = products.map(p => this.renderItem(p, 'product')).join('');
+                },
+                renderItem(item, type) {
+                    let imgHtml = '';
+                    if (item.img && item.img !== 'null' && type !== 'category') {
+                        imgHtml = `<img src="${item.img}" alt="${item.name}" style="height: 40px; object-fit: contain;" class="mb-2" onerror="this.style.display='none'">`;
+                    } else {
+                        if (type === 'category') imgHtml = `<i class="bi bi-grid fs-2 text-primary mb-2" style="opacity:0.8;"></i>`;
+                        else imgHtml = `<i class="bi bi-cpu fs-2 text-primary mb-2"></i>`;
+                    }
+                    let statusBadge = '';
+                    if (type === 'product') {
+                        if (item.status === 'available') statusBadge = `<span class="badge-soft-success mt-2 d-inline-block"><i class="bi bi-check-circle me-1"></i>tersedia</span>`;
+                        else statusBadge = `<span class="badge-soft-danger mt-2 d-inline-block"><i class="bi bi-x-circle me-1"></i>habis</span>`;
+                    }
+                    let priceHtml = (item.price && type==='product') ? `<div class="fw-bold mt-2" style="color:var(--bs-primary);">Rp ${parseInt(item.price).toLocaleString('id-ID')}</div>` : '';
+                    let noteHtml = (item.note && type==='product') ? `<div class="small text-secondary mt-1">${item.note}</div>` : '';
+                    return `
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="selection-item card p-2 ${item.status === 'unavailable' ? 'status-unavailable' : ''}" data-key="${item.code || item.name}">
+                                <div class="card-body text-center">
+                                    ${imgHtml}
+                                    <div class="fw-semibold text-truncate w-100 small">${item.name}</div>
+                                    ${priceHtml}
+                                    ${statusBadge}
+                                    ${noteHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                },
+                updateFormDetail() {
+                    const p = this.state.product;
+                    if (!p) return;
+                    this.els.selectedProductName.innerText = p.name;
+                    this.els.selectedProductPrice.innerText = `Rp ${parseInt(p.price).toLocaleString('id-ID')}`;
+                    if (p.note) { this.els.selectedProductNote.innerText = p.note; this.els.selectedProductNoteWrap.style.display = 'block'; } else { this.els.selectedProductNoteWrap.style.display = 'none'; }
+                    this.els.selectedProductDetails.style.display = 'block';
+                    this.els.errorMessage.classList.add('d-none');
+                },
+                resetSelectedProduct() {
+                    this.state.product = null;
+                    this.els.selectedProductDetails.style.display = 'none';
+                    this.els.productList?.querySelectorAll('.active').forEach(c => c.classList.remove('active'));
+                    this.checkForm();
+                },
+                checkForm() {
+                    const productOk = this.state.product?.status === 'available';
+                    const tujuanOk = this.els.tujuan.value.trim() !== '';
+                    this.els.submitButton.disabled = !(productOk && tujuanOk);
+                },
+                showError(msg) {
+                    this.els.errorMessageText.innerText = msg;
+                    this.els.errorMessage.classList.remove('d-none');
+                },
+                async handleSubmit(e) {
+                    e.preventDefault();
+                    const product = this.state.product; const tujuan = this.els.tujuan.value.trim();
+                    if (!product || product.status !== 'available' || !tujuan) { this.showError('pilih produk & isi tujuan'); return; }
+                    const btn = this.els.submitButton;
+                    btn.disabled = true; btn.classList.add('submitting');
+                    this.els.errorMessage.classList.add('d-none');
+                    try {
+                        const resp = await fetch('/api/buat-transaksi', {
+                            method: 'POST',
+                            headers: {'Content-Type':'application/json'},
+                            body: JSON.stringify({ code: product.code, tujuan, price: product.price })
+                        });
+                        const data = await resp.json();
+                        if (!resp.ok || !data.success) throw new Error(data.message || 'gagal transaksi');
+                        sessionStorage.setItem('pendingTransaction', JSON.stringify(data));
+                        window.location.href = '/payment';
+                    } catch (err) {
+                        this.showError(err.message);
+                        btn.disabled = false; btn.classList.remove('submitting');
+                    }
+                }
+            };
+            document.addEventListener('DOMContentLoaded', () => app.init());
+        })();
+    </script>
+</body>
+</html>
