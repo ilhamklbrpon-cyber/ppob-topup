@@ -16,7 +16,7 @@ const VPEDIA_BASE_URL = "https://khafatopup.my.id/h2h";
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const mongoURI = 'mongodb+srv://khafa:khafa120@cluster0.fbdbmwx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const mongoURI = 'mongodb+srv://khafa:khafa120@cluster0.fbdbmwx.mongodb.net/?appName=Cluster0';
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
@@ -28,18 +28,12 @@ app.use(session({
   secret: 'kurumi-secret-session',
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ 
-    mongoUrl: mongoURI,
-    collectionName: 'sessions'
-  }),
+  store: MongoStore.create({ mongoUrl: mongoURI }),
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24, // 24 jam
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production'
+    maxAge: 1000 * 60 * 60 * 24,
   }
 }));
 
-// Schema Produk
 const productSchema = new mongoose.Schema({
   nama: { type: String, required: true },
   deks: { type: String },
@@ -51,7 +45,6 @@ const productSchema = new mongoose.Schema({
 
 const Product = mongoose.model('Product', productSchema);
 
-// Schema Transaksi
 const transactionSchema = new mongoose.Schema({
     nominalDeposit: { type: Number, default: 0 },
     saldoDiterima: { type: Number, default: 0 },
@@ -69,7 +62,6 @@ const transactionSchema = new mongoose.Schema({
 
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
-// Middleware cek login
 function isLoggedIn(req, res, next) {
   if (req.session && req.session.admin) {
     return next();
@@ -78,7 +70,6 @@ function isLoggedIn(req, res, next) {
   }
 }
 
-// Routes Halaman
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
@@ -111,32 +102,22 @@ app.get('/status', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'status.html'));
 });
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// API Login
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
-  // Ganti dengan credentials yang diinginkan
-  if (username === 'admin' && password === 'admin123') {
+  if (username === 'kinzxxoffc' && password === 'kinzxxoffc') {
     req.session.admin = { username };
     return res.json({ success: true, message: 'Login berhasil' });
   }
   res.status(401).json({ success: false, message: 'Username/password salah' });
 });
 
-// API Logout
 app.get('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ success: false, message: 'Gagal logout' });
-    }
+  req.session.destroy(() => {
     res.json({ success: true, message: 'Logout berhasil' });
   });
 });
 
-// API Mutasi (Riwayat Transaksi)
+
 app.get('/api/mutasi', isLoggedIn, async (req, res) => {
     try {
         const history = await Transaction.find({}).sort({ tanggal: -1 });
@@ -147,7 +128,7 @@ app.get('/api/mutasi', isLoggedIn, async (req, res) => {
     }
 });
 
-// API Produk
+
 app.post('/produk', isLoggedIn, async (req, res) => {
   try {
     const produk = new Product(req.body);
@@ -177,19 +158,19 @@ app.delete('/produk/:id', isLoggedIn, async (req, res) => {
   }
 });
 
-// API Layanan dari VPedia
+const vpediaAPI = axios.create({
+    baseURL: VPEDIA_BASE_URL,
+    headers: { 'X-APIKEY': VPEDIA_API_KEY }
+});
+
 app.get('/api/layanan', async (req, res) => {
     try {
         console.log('[LOG] Meminta daftar layanan dari VPedia...');
-        const response = await axios.get(`${VPEDIA_BASE_URL}/layanan/price-list`, {
-            headers: { 'X-APIKEY': VPEDIA_API_KEY }
-        });
-        
+        const response = await vpediaAPI.get('/layanan/price-list');
         if (response.data && response.data.success) {
             const layanan = response.data.data.map(item => {
                 const originalPrice = parseFloat(item.price);
-                // Hitung markup harga (1.4% + 200)
-                const markup = Math.round(originalPrice * 1.014) + 200;
+                const markup = Math.round(originalPrice * 1.014) + 200 + feenya;
                 return {
                     ...item,
                     price: markup.toString()
@@ -205,45 +186,32 @@ app.get('/api/layanan', async (req, res) => {
     }
 });
 
-// API Buat Transaksi
 app.post('/api/buat-transaksi', async (req, res) => {
     const { code, tujuan, price } = req.body;
     if (!code || !tujuan || !price) {
         return res.status(400).json({ success: false, message: 'Parameter tidak lengkap.' });
     }
-    
     try {
         const internalTrxId = uuid();
         console.log(`[LOG] Membuat permintaan deposit untuk Transaksi Internal: ${internalTrxId} dengan nominal: ${price}`);
-        
-        const depositResponse = await axios.get(`${VPEDIA_BASE_URL}/deposit/create?nominal=${price}`, {
-            headers: { 'X-APIKEY': VPEDIA_API_KEY }
-        });
-        
+        const depositResponse = await vpediaAPI.get(`/deposit/create?nominal=${price}`);
         console.log('[LOG] Respon dari VPedia (Buat Deposit):', JSON.stringify(depositResponse.data, null, 2));
-        
         if (depositResponse.data && depositResponse.data.success) {
             const depositData = depositResponse.data.data;
-            
             const newTransaction = new Transaction({
                 internalTrxId: internalTrxId,
                 idDeposit: depositData.id,
                 tujuan: tujuan,
                 productCode: code,
             });
-            
             await newTransaction.save();
-            
             res.json({
                 success: true,
                 internalTrxId: internalTrxId,
                 paymentDetails: depositData
             });
         } else {
-            res.status(500).json({ 
-                success: false, 
-                message: depositResponse.data.message || 'Gagal membuat permintaan deposit.' 
-            });
+            res.status(500).json({ success: false, message: depositResponse.data.message || 'Gagal membuat permintaan deposit.' });
         }
     } catch (error) {
         console.error('[ERROR] Gagal saat membuat transaksi:', error.response ? JSON.stringify(error.response.data) : error.message);
@@ -251,93 +219,59 @@ app.post('/api/buat-transaksi', async (req, res) => {
     }
 });
 
-// API Cek Status Deposit
 app.get('/api/cek-status-deposit', async (req, res) => {
     const { trxId } = req.query;
     if (!trxId) {
         return res.status(400).json({ success: false, message: 'ID Transaksi tidak ditemukan.' });
     }
-    
     try {
         const dbTransaction = await Transaction.findOne({ internalTrxId: trxId });
         if (!dbTransaction) {
             return res.status(404).json({ success: false, message: 'Transaksi tidak ditemukan di database.' });
         }
-        
-        // Jika sudah success, langsung kembalikan response
         if (dbTransaction.statusDeposit === 'success') {
-            return res.json({ 
-                depositStatus: 'success', 
-                orderId: dbTransaction.idOrder 
-            });
+            return res.json({ depositStatus: 'success', orderId: dbTransaction.idOrder });
         }
-        
         console.log(`[LOG] Mengecek status deposit VPedia ID: ${dbTransaction.idDeposit}`);
-        const statusResponse = await axios.get(`${VPEDIA_BASE_URL}/deposit/status?id=${dbTransaction.idDeposit}`, {
-            headers: { 'X-APIKEY': VPEDIA_API_KEY }
-        });
-        
+        const statusResponse = await vpediaAPI.get(`/deposit/status?id=${dbTransaction.idDeposit}`);
         console.log('[LOG] Respon dari VPedia (Cek Deposit):', JSON.stringify(statusResponse.data, null, 2));
-        
         const depositStatus = statusResponse.data?.data?.status || 'pending';
         dbTransaction.statusDeposit = depositStatus;
-        
-        // Jika deposit sukses, buat order
         if (statusResponse.data.success && depositStatus === 'success') {
             dbTransaction.nominalDeposit = statusResponse.data.data.nominal;
             dbTransaction.saldoDiterima = statusResponse.data.data.get_balance;
-            
             console.log(`[LOG] Deposit Sukses. Membuat order untuk produk: ${dbTransaction.productCode} ke ${dbTransaction.tujuan}`);
-            
-            const orderResponse = await axios.get(`${VPEDIA_BASE_URL}/order/create?code=${dbTransaction.productCode}&tujuan=${dbTransaction.tujuan}`, {
-                headers: { 'X-APIKEY': VPEDIA_API_KEY }
-            });
-            
+            const orderResponse = await vpediaAPI.get(`/order/create?code=${dbTransaction.productCode}&tujuan=${dbTransaction.tujuan}`);
             console.log('[LOG] Respon dari VPedia (Buat Order):', JSON.stringify(orderResponse.data, null, 2));
-            
             if (orderResponse.data && orderResponse.data.success) {
                 dbTransaction.idOrder = orderResponse.data.data.id;
                 dbTransaction.statusOrder = orderResponse.data.data.status;
-                
-                await dbTransaction.save();
-                
                 res.json({
                     depositStatus: 'success',
                     orderId: dbTransaction.idOrder
                 });
             } else {
                 dbTransaction.statusOrder = 'gagal_buat_order';
-                await dbTransaction.save();
-                
-                res.json({ 
-                    depositStatus: 'success', 
-                    orderStatus: 'failed_creation', 
-                    message: orderResponse.data.message || 'Gagal membuat order di VPedia' 
-                });
+                res.json({ depositStatus: 'success', orderStatus: 'failed_creation', message: orderResponse.data.message || 'Gagal membuat order di VPedia' });
             }
         } else {
-            await dbTransaction.save();
             res.json({ depositStatus: depositStatus });
         }
+        await dbTransaction.save();
     } catch (error) {
         console.error('[ERROR] Gagal saat cek status deposit:', error.response ? JSON.stringify(error.response.data) : error.message);
         res.status(500).json({ success: false, message: 'Terjadi kesalahan pada server.' });
     }
 });
 
-// API Cek Status Order
 app.get('/api/cek-status-order', async (req, res) => {
     const { orderId } = req.query;
     if (!orderId) {
         return res.status(400).json({ success: false, message: 'ID Order tidak ada.' });
     }
-    
     try {
         console.log(`[LOG] Mengecek status order VPedia ID: ${orderId}`);
-        const statusResponse = await axios.get(`${VPEDIA_BASE_URL}/order/check?id=${orderId}`, {
-            headers: { 'X-APIKEY': VPEDIA_API_KEY }
-        });
-        
+        const statusResponse = await vpediaAPI.get(`/order/check?id=${orderId}`);
         const responseData = statusResponse.data;
         const successStatus = responseData.success || responseData.status === true;
 
@@ -346,7 +280,6 @@ app.get('/api/cek-status-order', async (req, res) => {
         if (successStatus && responseData.data) {
             const orderData = responseData.data;
             const dbTransaction = await Transaction.findOne({ idOrder: orderId });
-            
             if (dbTransaction) {
                 const isFinalized = dbTransaction.hargaProduk > 0;
                 dbTransaction.statusOrder = orderData.status;
@@ -360,7 +293,6 @@ app.get('/api/cek-status-order', async (req, res) => {
                 await dbTransaction.save();
             }
         }
-        
         res.json(responseData);
     } catch (error) {
         console.error('[ERROR] Gagal saat cek status order:', error.response ? JSON.stringify(error.response.data) : error.message);
@@ -368,7 +300,21 @@ app.get('/api/cek-status-order', async (req, res) => {
     }
 });
 
-// Jalankan server
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+
 app.listen(PORT, () => {
     console.log(`Server berjalan di http://localhost:${PORT}`);
+
 });
+
+
+
+
+
+
+
+
+
